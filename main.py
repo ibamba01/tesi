@@ -1,9 +1,7 @@
 import numpy as np
-from sqlalchemy.sql.functions import random
 import mappa
 import drone
 import pandas as pd
-import numpy as np
 import seaborn as sns
 import matplotlib.pyplot as plt
 
@@ -11,17 +9,20 @@ import matplotlib.pyplot as plt
 if __name__ == '__main__':
     griglia = mappa.MapGrid(49, 49)
 
-    # Inizializza un drone nella posizione (0, 0)
-    drone = drone.Drone(griglia,4,4)
-    print(f"Posizione iniziale del drone: {drone.get_position()}")
+    # Inizializza un drone nella posizione
+    drone_1 = drone.Drone(griglia,4,4,los=4)
+    drone_2 = drone.Drone(griglia,rand=True,los=4)
     # Sposta il drone in varie direzioni
-    for i in range(1, 50):
-        drone.move_random()
-    print(f"Posizione del drone finale: {drone.get_position()}")
+    for t in range(100):
+        # suddivido le zone
+        griglia.calc_zones()
+        # i droni decidono dove andare
+        # si spostano
 
 
     # fa vedere il tragitto
-    mgrid =griglia.get_map()
+    mgrid = griglia.value_grid()
+
     sns.set_theme(style="darkgrid")
     ax = sns.heatmap(mgrid, vmin=0, vmax=1)
     plt.show()

@@ -1,24 +1,62 @@
 import numpy as np
-
+import random
+import math
 class MapGrid:
-    def __init__(self, righe, colonne, valore_iniziale=0,rando=False):
+    def __init__(self, righe, colonne, valore_iniziale=0, agente_iniziale=None , rando=False):
         # Crea una griglia di dimensioni (rows x cols) con valore iniziale specificato
         if rando:
-            self.grid = np.random.rand(righe, colonne) # riempie la griglia di valori randomici tra 0 e 1
+            # crea una matrice vuota, n x m in cui ogni cella è un oggetto complesso
+            self.grid = np.empty((righe, colonne), dtype=object)
+            # itera su tutte le celle
+            for i in range(righe):
+                for j in range(colonne):
+                    # assegna a ogni cella un valore casuale, e l'agente iniziale
+                    valore_casuale = round(random.uniform(0, 1), 2)  # Valore casuale tra 0 e 1, arrotondato a 2 decimali
+                    self.grid[i, j] = (valore_casuale, agente_iniziale)
         else:
-            if valore_iniziale == 0: # griglia di zeri
-                self.grid = np.zeros((righe, colonne))  # doppia parentesi perchè zeros richiede una tupla
-            else:
-                self.grid = np.full((righe, colonne), valore_iniziale)
+            # dtype = object indica che ogni cella è un oggetto complesso in questo caso contiene una tupla
+            # crea una griglia n (righe) x m (colonne), ogni cella è impostata a valore_iniziale default = 0 e "appartiene" a Agente iniziale default = nessuno
+            # crea una griglia vuota, n x m
+            self.grid = np.empty((righe, colonne), dtype=object)
+            # iteriamo su tutte le celle della griglia inizializzando con il valore desiderato
+            for i in range(righe):
+                for j in range(colonne):
+                    self.grid[i, j] = (valore_iniziale, agente_iniziale)
+        self.dronelist = [] # mantengo una lista di tutte le istanze dei droni vivi
 
-    def set_cell(self, row, col, value):
-        # .shape[0] rende il num dle righe e .shape[1] rende il num dle colonne
-        # Modifica il valore di una cella specifica
-        if 0 <= row < self.grid.shape[0] and 0 <= col < self.grid.shape[1]:
-            self.grid[row, col] = value
+# ----------------------------------------gestione droni----------------------------------------------------------------
+    def add_drone(self, drone):
+        # Aggiunge un drone alla lista condivisa
+        self.dronelist.append(drone)
+
+    def remove_drone(self, drone):
+        # rimuove un drone dalla lista
+        self.dronelist.remove(drone)
+
+    def display_dronelist(self):
+        print("Lista dei droni sulla mappa:")
+        for i, drone in enumerate(self.dronelist, start=1):
+            x, y = drone.get_position()
+            print(f"Drone {i}: posizione ({x}, {y}), line-of-sight {drone.lineofsight}")
+
+    def clear_dronelist(self):
+        self.dronelist.clear()
+        print("Tutti i droni sono stati rimossi dalla mappa.")
+
+# ----------------------------------------set fun-----------------------------------------------------------------------
+    def set_cell(self, row, col, value=None, agente=None):
+        # controllo se la cella da modificare è valida
+        if self.is_within_bounds(row, col):
+            # se non è stato passato un valore
+            if value is None:
+                # imposto come valore da assegnare il valore corrente
+                value = self.grid[row, col][0]
+            # imposto il nuovo valore, possessore della cella
+            self.grid[row, col] = (value, agente)
         else:
             print("Errore: le coordinate sono fuori dai limiti della griglia.")
 
+# ----------------------------------------get fun-----------------------------------------------------------------------
     def get_cell(self, row, col):
         # Ottiene il valore di una cella specifica
         if 0 <= row < self.grid.shape[0] and 0 <= col < self.grid.shape[1]:
@@ -26,25 +64,78 @@ class MapGrid:
         else:
             print("Errore: le coordinate sono fuori dai limiti della griglia.")
             return None
+
     def get_bound(self):
         return self.grid.shape[0], self.grid.shape[1]
 
+    def get_map(self):
+        return self.grid
+
+# ----------------------------------------check fun---------------------------------------------------------------------
     def is_within_bounds(self, x, y):
         # Verifica se (x, y) è all'interno dei limiti della griglia
         return 0 <= x < self.grid.shape[0] and 0 <= y < self.grid.shape[1]
 
+    def is_occupied(self, x, y):
+        occ = False
+        for dd in self.dronelist:
+            pdx, pdy = dd.get_position()
+            if x == pdx and y == pdy:
+                occ = True
+        return occ
+# ----------------------------------------print fun---------------------------------------------------------------------
     def display(self):
         # Stampa la griglia
         print("\n",self.grid,"\n")
 
-    def loss(self,value):
+    def value_grid(self):
+        # Inizializza una nuova griglia con valori zero (o un altro valore predefinito)
+        grid_values = np.zeros((self.grid.shape[0], self.grid.shape[1]))
+        # Scorri ogni cella della griglia
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                valore, _ = self.grid[i, j]  # Estrai il valore dalla tupla (valore, agente)
+                grid_values[i, j] = valore  # Imposta il valore nella nuova griglia
+        return grid_values
+
+    def agent_grid(self):
+        # Inizializza una nuova griglia con valori zero (o un altro valore predefinito)
+        grid_values = np.zeros((self.grid.shape[0], self.grid.shape[1]))
+        # Scorri ogni cella della griglia
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                _, agent = self.grid[i, j]  # Estrai l'agente dalla tupla (valore, agente)
+                grid_values[i, j] = agent  # Imposta l'agente nella nuova griglia
+        return grid_values
+# ----------------------------------------logic fun---------------------------------------------------------------------
+    @staticmethod
+    def knloss(value):
         return value * 0.9
-    def get_map(self):
-        return self.grid
+
     def update(self, seencelllist):
-        v = np.vectorize(self.loss)
-        self.grid = v(self.grid)
+        # Applica la perdita di pacchetti solo ai valori numerici
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                valore, agente = self.grid[i, j]
+                nuovo_valore = self.knloss(valore)
+                self.grid[i, j] = (nuovo_valore, agente)
 
         for pos in seencelllist:
             posx, posy = pos
             self.set_cell(posx, posy, 1)  # Imposta 1 per le celle visibili
+
+    def calc_zones(self):
+        for i in range (0, self.grid.shape[0]):
+            for j in range (0, self.grid.shape[1]):
+                min_distance = -1
+                min_drone = None
+                px = i
+                py = j
+                for dd in self.dronelist:
+                    pdx, pdy = dd.get_position()
+                    distance = math.sqrt((pdx - px) ** 2 + (pdy - py) ** 2)
+                    if distance < min_distance or min_distance == -1:
+                        min_distance = distance
+                        min_drone = dd
+                # assign to the cell the closest drone
+                self.set_cell(i, j, agente=min_drone)
