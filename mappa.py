@@ -57,10 +57,44 @@ class MapGrid:
             print("Errore: le coordinate sono fuori dai limiti della griglia.")
 
 # ----------------------------------------get fun-----------------------------------------------------------------------
+    def get_value_grid(self):
+        # Inizializza una nuova griglia con valori zero (o un altro valore predefinito)
+        grid_values = np.zeros((self.grid.shape[0], self.grid.shape[1]))
+        # Scorri ogni cella della griglia
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                grid_values[i, j] = self.get_value(i,j)  # Estrai il valore dalla tupla (valore, agente) e lo imposta nella nuova matrice
+        return grid_values
+
+    def get_agent_grid(self):
+        # Inizializza una nuova griglia con valori zero (o un altro valore predefinito)
+        grid_agents = np.zeros((self.grid.shape[0], self.grid.shape[1]))
+        # Scorri ogni cella della griglia
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                grid_agents[i, j] = self.get_agent(i,j) # Estrai l'agente dalla tupla (valore, agente)
+        return grid_agents
+
     def get_cell(self, row, col):
         # Ottiene il valore di una cella specifica
         if 0 <= row < self.grid.shape[0] and 0 <= col < self.grid.shape[1]:
             return self.grid[row, col]
+        else:
+            print("Errore: le coordinate sono fuori dai limiti della griglia.")
+            return None
+
+    def get_value(self, row, col):
+        if 0 <= row < self.grid.shape[0] and 0 <= col < self.grid.shape[1]:
+            value = self.grid[row, col][0] # 0 indica il primo elemento (value)
+            return value
+        else:
+            print("Errore: le coordinate sono fuori dai limiti della griglia.")
+            return None
+
+    def get_agent(self, row, col):
+        if 0 <= row < self.grid.shape[0] and 0 <= col < self.grid.shape[1]:
+            agent = self.grid[row, col][1] # 1 indica il secondo elemento (agente)
+            return agent
         else:
             print("Errore: le coordinate sono fuori dai limiti della griglia.")
             return None
@@ -87,30 +121,10 @@ class MapGrid:
     def display(self):
         # Stampa la griglia
         print("\n",self.grid,"\n")
-
-    def value_grid(self):
-        # Inizializza una nuova griglia con valori zero (o un altro valore predefinito)
-        grid_values = np.zeros((self.grid.shape[0], self.grid.shape[1]))
-        # Scorri ogni cella della griglia
-        for i in range(self.grid.shape[0]):
-            for j in range(self.grid.shape[1]):
-                valore, _ = self.grid[i, j]  # Estrai il valore dalla tupla (valore, agente)
-                grid_values[i, j] = valore  # Imposta il valore nella nuova griglia
-        return grid_values
-
-    def agent_grid(self):
-        # Inizializza una nuova griglia con valori zero (o un altro valore predefinito)
-        grid_values = np.zeros((self.grid.shape[0], self.grid.shape[1]))
-        # Scorri ogni cella della griglia
-        for i in range(self.grid.shape[0]):
-            for j in range(self.grid.shape[1]):
-                _, agent = self.grid[i, j]  # Estrai l'agente dalla tupla (valore, agente)
-                grid_values[i, j] = agent  # Imposta l'agente nella nuova griglia
-        return grid_values
 # ----------------------------------------logic fun---------------------------------------------------------------------
     @staticmethod
     def knloss(value):
-        return value * 0.9
+        return value * 0.98
 
     def update(self, seencelllist):
         # Applica la perdita di pacchetti solo ai valori numerici
@@ -139,3 +153,27 @@ class MapGrid:
                         min_drone = dd
                 # assign to the cell the closest drone
                 self.set_cell(i, j, agente=min_drone)
+                min_drone.add_cell((i,j)) # passo una tupla contenente la pos della cella
+        for dd in self.dronelist:
+            dd.calc_target()
+            dd.move_to_target()
+
+
+    # data una posizione e un raggio, calcola il la differenza totale del valore delle celle vicine se fossero settate a 1
+    def cell_circle_value(self, posx, posy, raggio):
+        valore_possibile = 0
+        # deve calcolare il valore totale delle celle vicine alla posizione passata in un raggio circolare
+        # Itera attraverso le celle circostanti, considerando il raggio
+        for i in range(-raggio, raggio + 1):
+            for j in range(-raggio, raggio + 1):
+                # Calcola la posizione della cella vicina
+                nx, ny = posx + i, posy + j
+
+                # Calcola la distanza euclidea dalla posizione centrale
+                distanza = math.sqrt(i ** 2 + j ** 2)
+
+                # Controlla se la cella vicina è all'interno del raggio e all'interno dei limiti della griglia
+                if ( distanza <= raggio ) and ( self.is_within_bounds(nx, ny) ):# and ( (nx, ny) in self.my_cells ):
+                    valore_possibile += (1 - self.get_value(nx, ny) )
+
+        return valore_possibile
