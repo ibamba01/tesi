@@ -1,5 +1,8 @@
 import math
 import random
+
+
+
 class Drone:
 # -------------------------------------------- class fun----------------------------------------------------------------
     def __init__(self, grid, x=0, y=0 ,los=2, rand=False):
@@ -48,28 +51,23 @@ class Drone:
             self.x -= 1
         else:
             print("Movimento non consentito: fuori dai limiti della griglia.")
-        self.see()
-
     def move_down(self):
         if self.grid.is_within_bounds(self.x + 1, self.y):
             self.x += 1
         else:
             print("Movimento non consentito: fuori dai limiti della griglia.")
-        self.see()
 
     def move_left(self):
         if self.grid.is_within_bounds(self.x, self.y - 1):
             self.y -= 1
         else:
             print("Movimento non consentito: fuori dai limiti della griglia.")
-        self.see()
 
     def move_right(self):
         if self.grid.is_within_bounds(self.x, self.y + 1):
             self.y += 1
         else:
             print("Movimento non consentito: fuori dai limiti della griglia.")
-        self.see()
 
     def teleport(self, x, y):
         if self.grid.is_within_bounds(x, y):
@@ -77,7 +75,15 @@ class Drone:
             self.x = x
         else:
             print("Movimento non consentito: fuori dai limiti della griglia.")
-        self.see()
+
+    def move_random(self):
+        x = random.randint(-1,1)
+        y = random.randint(-1,1)
+        if self.grid.is_within_bounds(self.x, self.y + y):
+            self.y += y
+        if self.grid.is_within_bounds(self.x + x, self.y):
+            self.x += x
+        #print(f"La posizione attuale è:",self.get_position())
 
     def move(self, x=0, y=0):
         if self.grid.is_within_bounds(self.x, self.y + y):
@@ -88,17 +94,7 @@ class Drone:
             print("Movimento non consentito: fuori dai limiti della griglia.")
         #print(f"La posizione attuale è:",self.get_position())
 
-    def move_random(self):
-        x = random.randint(-1,1)
-        y = random.randint(-1,1)
-        if self.grid.is_within_bounds(self.x, self.y + y):
-            self.y += y
-        if self.grid.is_within_bounds(self.x + x, self.y):
-            self.x += x
-        #print(f"La posizione attuale è:",self.get_position())
-        self.see()
-
-    def move_to_target(self):
+    def to_target(self):
         # Posizione attuale del drone
         current_x, current_y = self.get_position()
         # Coordinate del target
@@ -121,35 +117,33 @@ class Drone:
         self.move(move_x, move_y)
 
 # --------------------------------------- logic ------------------------------------------------------------------------
-    def see(self):
-        celle_visibili = []
-        for dd in self.grid.dronelist:
-            posx, posy = dd.get_position()
-
-            celle_viste = 0
-            # campo di vista circolare
-            for i in range(-dd.lineofsight, dd.lineofsight + 1):
-                for j in range(-dd.lineofsight, dd.lineofsight + 1):
-                    # Calcola la distanza euclidea
+    def vista_drone(self):
+        posx, posy = self.get_position()
+        for i in range(-self.lineofsight, self.lineofsight + 1):
+            for j in range(-self.lineofsight, self.lineofsight + 1):
+                # solo se la cella è dentro i limiti della griglia
+                if  self.grid.is_within_bounds(posx + i, posy + j):
+                    # calcola la distanza euclidea
                     distance = math.sqrt(i ** 2 + j ** 2)
-
-                    # Se la cella è dentro il raggio di lineofsight e dentro i limiti della griglia
-                    if distance <= dd.lineofsight and dd.grid.is_within_bounds(posx + i, posy + j):
-                        celle_visibili.append((posx + i, posy + j))
-                        celle_viste += 1
-            #print(f"Celle visibili: {seecell}")  # Aggiungi una stampa per debug
-            #print (f"Drone {dd} ha visto {celle_viste} celle") # Stampa il numero di celle viste
-        self.grid.update(celle_visibili) # Aggiorna la griglia con quelle celle
+                    if distance <= self.lineofsight: # se la cella è dentro il raggio di lineofsight
+                        self.grid.set_cell(posx + i, posy + j, 1.0) # Imposta 1 per le celle visibili
 
     # calcola quale cella massimizza il valore delle celle viste
     def calc_target(self):
-        max = 0
+        max_possible = 0
         mtup = (0,0)
-        for tup in self.my_cells:
+        #n = len(self.my_cells)
+        #for i in range(30):
+         #   px, py = self.my_cells[random.randint(0, n-1)]
+          #  temp = self.grid.cell_circle_value(px, py, self)
+           # if temp > max_possible:
+            #    max_possible = temp
+             #   mtup = (px, py)
+        for tup in self.my_cells: # posso migliorarlo
             px, py = tup
-            temp = self.grid.cell_circle_value(px, py, self.lineofsight)
-            if temp > max:
-                max = temp
+            temp = self.grid.cell_circle_value(px, py, self)
+            if temp > max_possible:
+                max_possible = temp
                 mtup = tup
         # aggiunge la cella che massimizza come target
         self.set_target(mtup[0], mtup[1])
