@@ -33,17 +33,24 @@ class Drone:
         if self in self.grid.dronelist:
             self.grid.remove_drone(self)
 
-#----------------------------------------gestione zone------------------------------------------------------------------------
+#----------------------------------------gestione zone------------------------------------------------------------------
     def add_cell(self, cell):
         self.my_cells.append(cell)
 
-    def clear_dronelist(self):
+    def clear_cell(self):
         self.my_cells.clear()
 
 #----------------------------------------get fun------------------------------------------------------------------------
     def get_position(self):
         # Restituisce la posizione attuale del drone
         return self.x, self.y
+
+#----------------------------------------set fun------------------------------------------------------------------------
+    def set_target(self, x, y):
+        if self.grid.is_within_bounds(x, y):
+            self.target = (x, y)
+        else:
+            print("Target non valido: fuori dai limiti della griglia.")
 
 #-------------------------------------- movement------------------------------------------------------------------------
     def move_up(self):
@@ -130,26 +137,16 @@ class Drone:
 
     # calcola quale cella massimizza il valore delle celle viste
     def calc_target(self):
-        max_possible = 0
+        # il valore massimo che posso ottenere chiamando la funzione cell_circle_value su quella cella
+        max_possibile = 0
+        # tupla della cella che massimizza il valore
         mtup = (0,0)
-        #n = len(self.my_cells)
-        #for i in range(30):
-         #   px, py = self.my_cells[random.randint(0, n-1)]
-          #  temp = self.grid.cell_circle_value(px, py, self)
-           # if temp > max_possible:
-            #    max_possible = temp
-             #   mtup = (px, py)
-        for tup in self.my_cells: # posso migliorarlo
+        # per ogni cella appartenente al drone
+        for tup in self.my_cells:
             px, py = tup
             temp = self.grid.cell_circle_value(px, py, self)
-            if temp > max_possible:
-                max_possible = temp
+            if temp > max_possibile:
+                max_possibile = temp
                 mtup = tup
-        # aggiunge la cella che massimizza come target
+        # imposta come target la cella che massimizza il valore
         self.set_target(mtup[0], mtup[1])
-
-    def set_target(self, x, y):
-        if self.grid.is_within_bounds(x, y):
-            self.target = (x, y)
-        else:
-            print("Target non valido: fuori dai limiti della griglia.")

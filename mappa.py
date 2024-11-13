@@ -2,7 +2,7 @@ import numpy as np
 import random
 import math
 class MapGrid:
-    def __init__(self, righe, colonne, valore_iniziale=0, rando=False, perdita=0.98):
+    def __init__(self, righe, colonne, valore_iniziale=0.0, rando=False, perdita=0.98):
         self.perdita = perdita
         # Crea una griglia di dimensioni (rows x cols) con valore iniziale specificato
         if rando:
@@ -25,6 +25,18 @@ class MapGrid:
                     self.grid[i, j] = valore_iniziale
         self.dronelist = [] # mantengo una lista di tutte le istanze dei droni vivi
 
+    # fa partire la logica dei droni
+    def start(self):
+        # perdita di pacchetti per turno
+        self.knloss()
+        # partizione di Voronoi
+        self.partizione()
+        # per ogni drone calcola il target e si sposta
+        for dd in self.dronelist:
+            dd.calc_target()
+            dd.to_target()
+            dd.vista_drone()  # imposta a 1 le celle viste dal drone
+
 # ----------------------------------------gestione droni----------------------------------------------------------------
     def add_drone(self, drone):
         # Aggiunge un drone alla lista condivisa
@@ -46,10 +58,10 @@ class MapGrid:
 
     def dronelist_clear_cells(self):
         for dd in self.dronelist:
-            dd.my_cells.clear()
+            dd.cler_cell()
 
 # ----------------------------------------set fun-----------------------------------------------------------------------
-    def set_cell(self, row, col, value=None, agente=None):
+    def set_cell(self, row, col, value=None):
         # controllo se la cella da modificare è valida
         if self.is_within_bounds(row, col):
             # se non è stato passato un valore
@@ -88,8 +100,6 @@ class MapGrid:
             print("Errore: le coordinate sono fuori dai limiti della griglia.")
             return None
 
-
-
     def get_bound(self):
         return self.grid.shape[0], self.grid.shape[1]
 
@@ -114,12 +124,12 @@ class MapGrid:
         print("\n",self.grid,"\n")
 
 # ----------------------------------------logic fun---------------------------------------------------------------------
-    def dim(self, value):
+    def dimenticanza(self, value):
         return value * self.perdita
 
     def knloss(self):
         # Applica la perdita di pacchetti solo ai valori numerici
-        v = np.vectorize(self.dim)
+        v = np.vectorize(self.dimenticanza)
         self.grid = v(self.grid)
 
     # partizione di Voronoi
@@ -145,19 +155,6 @@ class MapGrid:
                         min_drone = dd # salva il drone più vicino
                 # assign to the cell the closest drone
                 min_drone.add_cell( (i,j) ) # passo una tupla contenente la pos della cella
-        # obbligatorio
-
-    # fa partire la logica dei droni
-    def start(self):
-        # perdita di pacchetti per turno
-        self.knloss()
-        # partizione di Voronoi
-        self.partizione()
-        # per ogni drone calcola il target e si sposta
-        for dd in self.dronelist:
-            dd.calc_target()
-            dd.to_target()
-            dd.vista_drone() # imposta a 1 le celle viste dal drone
 
     # data una posizione e un raggio, calcola il la differenza totale del valore delle celle vicine se fossero settate a 1
     def cell_circle_value(self, posx, posy, drone):
