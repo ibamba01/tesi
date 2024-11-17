@@ -2,27 +2,27 @@ import numpy as np
 import random
 import math
 class MapGrid:
-    def __init__(self, righe, colonne, valore_iniziale=0.0, rando=False, perdita=0.98):
+    def __init__(self, righe, colonne, valore_iniziale=0.0, agente_iniziale = None, rando=False, perdita=0.98):
         self.perdita = perdita
         # Crea una griglia di dimensioni (rows x cols) con valore iniziale specificato
         if rando:
             # crea una matrice vuota, n x m in cui ogni cella è un oggetto complesso
-            self.grid = np.empty((righe, colonne))
+            self.grid = np.empty((righe, colonne), dtype=object)
             # itera su tutte le celle
             for i in range(righe):
                 for j in range(colonne):
                     # assegna a ogni cella un valore casuale, e l'agente iniziale
                     valore_casuale = round(random.uniform(0, 1), 2)  # Valore casuale tra 0 e 1, arrotondato a 2 decimali
-                    self.grid[i, j] = valore_casuale
+                    self.grid[i, j] = (valore_casuale, agente_iniziale)
         else:
             # dtype = object indica che ogni cella è un oggetto complesso in questo caso contiene una tupla
             # crea una griglia n (righe) x m (colonne), ogni cella è impostata a valore_iniziale default = 0 e "appartiene" a Agente iniziale default = nessuno
             # crea una griglia vuota, n x m
-            self.grid = np.empty((righe, colonne))
+            self.grid = np.empty((righe, colonne), dtype=object)
             # iteriamo su tutte le celle della griglia inizializzando con il valore desiderato
             for i in range(righe):
                 for j in range(colonne):
-                    self.grid[i, j] = valore_iniziale
+                    self.grid[i, j] = (valore_iniziale, agente_iniziale)
         self.dronelist = [] # mantengo una lista di tutte le istanze dei droni vivi
 
     # fa partire la logica dei droni
@@ -33,7 +33,7 @@ class MapGrid:
         self.partizione()
         # per ogni drone calcola il target e si sposta
         for dd in self.dronelist:
-            dd.calc_target()
+            dd.calc_target_circ()
             dd.to_target()
             dd.vista_drone()  # imposta a 1 le celle viste dal drone
 
@@ -58,18 +58,20 @@ class MapGrid:
 
     def dronelist_clear_cells(self):
         for dd in self.dronelist:
-            dd.cler_cell()
+            dd.clear_cell()
 
 # ----------------------------------------set fun-----------------------------------------------------------------------
-    def set_cell(self, row, col, value=None):
+    def set_cell(self, row, col, value=None, agente=None):
         # controllo se la cella da modificare è valida
         if self.is_within_bounds(row, col):
             # se non è stato passato un valore
             if value is None:
                 # imposto come valore da assegnare il valore corrente
                 value = self.grid[row, col][0]
+            if agente is None:
+                agente = self.grid[row, col][1]
             # imposto il nuovo valore, possessore della cella
-            self.grid[row, col] = value
+            self.grid[row, col] = (value, agente)
         else:
             print("Errore: le coordinate sono fuori dai limiti della griglia.")
 
@@ -83,6 +85,13 @@ class MapGrid:
                 grid_values[i, j] = self.get_value(i,j)  # Estrai il valore dalla tupla (valore, agente) e lo imposta nella nuova matrice
         return grid_values
 
+    def get_agent_grid(self):
+        grid_agents = np.zeros((self.grid.shape[0], self.grid.shape[1]))
+        # Scorri ogni cella della griglia
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                grid_agents[i, j] = self.get_agent(i, j)  # Estrai il valore dalla tupla (valore, agente) e lo imposta nella nuova matrice
+        return grid_agents
 
     def get_cell(self, row, col):
         # Ottiene il valore di una cella specifica
@@ -94,8 +103,16 @@ class MapGrid:
 
     def get_value(self, row, col):
         if 0 <= row < self.grid.shape[0] and 0 <= col < self.grid.shape[1]:
-            value = self.grid[row, col] # 0 indica il primo elemento (value)
+            value = self.grid[row, col][0] # 0 indica il primo elemento (value)
             return value
+        else:
+            print("Errore: le coordinate sono fuori dai limiti della griglia.")
+            return None
+
+    def get_agent(self, row, col):
+        if 0 <= row < self.grid.shape[0] and 0 <= col < self.grid.shape[1]:
+            agent = self.grid[row, col][1] # 1 indica il secondo elemento (agent)
+            return agent
         else:
             print("Errore: le coordinate sono fuori dai limiti della griglia.")
             return None
@@ -123,14 +140,26 @@ class MapGrid:
         # Stampa la griglia
         print("\n",self.grid,"\n")
 
+    def map_knoledge(self):
+        tot = 0
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                temp = self.get_value(i, j)
+                tot += temp
+        return tot / (self.grid.shape[0] * self.grid.shape[1])
+
+
 # ----------------------------------------logic fun---------------------------------------------------------------------
     def dimenticanza(self, value):
         return value * self.perdita
 
     def knloss(self):
-        # Applica la perdita di pacchetti solo ai valori numerici
-        v = np.vectorize(self.dimenticanza)
-        self.grid = v(self.grid)
+        # Applica la perdita di conoscenza solo ai valori numerici
+        for i in range(self.grid.shape[0]):
+            for j in range(self.grid.shape[1]):
+                value, agent = self.grid[i, j]  # Ottieni la tupla (valore, agente)
+                # Applica la perdita al valore e ricrea la tupla
+                self.grid[i, j] = (self.dimenticanza(value), agent)
 
     # partizione di Voronoi
     def partizione(self):
@@ -175,7 +204,9 @@ class MapGrid:
                     # calcola se la cella è già stata visitata
                     vv = self.get_value(nx, ny)
                     if vv == 0.0:
-                        valore_possibile += 2.5
+                        valore_possibile += 4.0 # per aiutare i bordi non scoperti
+                    elif vv <= 0.25:
+                        valore_possibile += (2.0 - vv) # per aiutare i bordi
                     else: # se la cella non è stata visitata, le assegno un "premio" per invogliare il drone a visitarla
                         valore_possibile += (1.0 - vv)
         return valore_possibile

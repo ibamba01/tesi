@@ -133,7 +133,7 @@ class Drone:
                     # calcola la distanza euclidea
                     distance = math.sqrt(i ** 2 + j ** 2)
                     if distance <= self.lineofsight: # se la cella è dentro il raggio di lineofsight
-                        self.grid.set_cell(posx + i, posy + j, 1.0) # Imposta 1 per le celle visibili
+                        self.grid.set_cell(posx + i, posy + j, 1.0, agente=self) # Imposta 1 per le celle visibili
 
     # calcola quale cella massimizza il valore delle celle viste
     def calc_target(self):
@@ -149,4 +149,42 @@ class Drone:
                 max_possibile = temp
                 mtup = tup
         # imposta come target la cella che massimizza il valore
+        self.set_target(mtup[0], mtup[1])
+
+
+    def calc_target_circ(self, max_radius=10):
+        """
+        Calcola il bersaglio del drone esplorando in modo progressivo anelli circolari concentrici
+        intorno alla posizione attuale del drone.
+
+        :param max_radius: Raggio massimo da esplorare.
+        """
+        # Posizione corrente del drone
+        current_x, current_y = self.get_position()
+        # Variabili per memorizzare il massimo valore trovato e la cella corrispondente
+        max_possibile = 0
+        mtup = (current_x, current_y)
+
+        # Esplora progressivamente anelli concentrici
+        for r in range(1, max_radius + 1):
+            # Itera su tutte le celle nell'anello
+            for dx in range(-r, r + 1):
+                for dy in range(-r, r + 1):
+                    # Considera solo le celle esattamente sull'anello
+                    if abs(dx) != r and abs(dy) != r:
+                        continue
+
+                    # Calcola la posizione della cella
+                    nx, ny = current_x + dx, current_y + dy
+
+                    # Controlla se la cella è valida e all'interno dei limiti
+                    if self.grid.is_within_bounds(nx, ny):
+                        # Calcola il valore della cella
+                        temp = self.grid.cell_circle_value(nx, ny, self)
+                        # Aggiorna il massimo se necessario
+                        if temp > max_possibile:
+                            max_possibile = temp
+                            mtup = (nx, ny)
+
+    # Imposta la cella che massimizza il valore come bersaglio
         self.set_target(mtup[0], mtup[1])
