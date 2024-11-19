@@ -40,6 +40,8 @@ class Drone:
     def clear_cell(self):
         self.my_cells.clear()
 
+    def is_my_cell(self, x, y):
+        return (x, y) in self.my_cells
 #----------------------------------------get fun------------------------------------------------------------------------
     def get_position(self):
         # Restituisce la posizione attuale del drone
@@ -152,12 +154,10 @@ class Drone:
         self.set_target(mtup[0], mtup[1])
 
 
-    def calc_target_circ(self, max_radius=10):
+    def calc_target_circ(self, max_radius=5):
         """
         Calcola il bersaglio del drone esplorando in modo progressivo anelli circolari concentrici
         intorno alla posizione attuale del drone.
-
-        :param max_radius: Raggio massimo da esplorare.
         """
         # Posizione corrente del drone
         current_x, current_y = self.get_position()
@@ -178,7 +178,7 @@ class Drone:
                     nx, ny = current_x + dx, current_y + dy
 
                     # Controlla se la cella è valida e all'interno dei limiti
-                    if self.grid.is_within_bounds(nx, ny):
+                    if self.is_my_cell(nx, ny) and self.grid.is_within_bounds(nx, ny):
                         # Calcola il valore della cella
                         temp = self.grid.cell_circle_value(nx, ny, self)
                         # Aggiorna il massimo se necessario

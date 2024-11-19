@@ -60,6 +60,9 @@ class MapGrid:
         for dd in self.dronelist:
             dd.clear_cell()
 
+    def dronelist_set(self):
+        agentlist = list(set(dd for dd in self.dronelist))
+        return agentlist
 # ----------------------------------------set fun-----------------------------------------------------------------------
     def set_cell(self, row, col, value=None, agente=None):
         # controllo se la cella da modificare è valida
@@ -86,7 +89,7 @@ class MapGrid:
         return grid_values
 
     def get_agent_grid(self):
-        grid_agents = np.zeros((self.grid.shape[0], self.grid.shape[1]))
+        grid_agents = np.empty((self.grid.shape[0], self.grid.shape[1],), dtype=object)
         # Scorri ogni cella della griglia
         for i in range(self.grid.shape[0]):
             for j in range(self.grid.shape[1]):
