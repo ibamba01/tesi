@@ -2,7 +2,7 @@ import numpy as np
 import random
 import math
 class MapGrid:
-    def __init__(self, righe, colonne, valore_iniziale=0.0, agente_iniziale=None, rando=False, has_wall=False, rando_wall=False, perdita=0.98):
+    def __init__(self, righe, colonne, valore_iniziale=0.0, agente_iniziale=None, rando=False, has_wall=False, rando_wall=False, perdita=0.98, wall_density=0.1):
         self.perdita = perdita
         self.has_wall = has_wall
         # Crea una griglia di dimensioni (rows x cols) con valore iniziale specificato
@@ -25,16 +25,18 @@ class MapGrid:
                 for j in range(colonne):
                     self.grid[i, j] = (valore_iniziale, agente_iniziale)
         self.dronelist = [] # mantengo una lista di tutte le istanze dei droni vivi
+        self.num_walls = 0
+        self.wall_density = 0
         if has_wall:
             if rando_wall:
+                self.wall_density = wall_density
                 # Posiziona pareti casuali
-                self.num_walls = int(0.1 * righe * colonne)  # il 10% delle celle sono pareti
+                self.num_walls = int(wall_density * righe * colonne)  # il 10% delle celle sono pareti
                 for ii in range(self.num_walls):
                     x = random.randint(0, righe - 1)
                     y = random.randint(0, colonne - 1)
                     self.grid[x, y] = ('WALL', None)
             else:
-                self.num_walls = 0
                 # Posiziona pareti predefinite (esempio: contorno della griglia)
                 for i in range(righe):
                     self.grid[i, 0] = ('WALL', None)  # Bordo sinistro
@@ -54,7 +56,7 @@ class MapGrid:
         self.partizione()
         # per ogni drone calcola il target e si sposta
         for dd in self.dronelist:
-            dd.calc_target_circ()
+            dd.calc_target()
             dd.to_target()
             dd.vista_drone()  # imposta a 1 le celle viste dal drone
 

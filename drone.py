@@ -1,6 +1,6 @@
 import math
 import random
-
+from dis import distb
 
 
 class Drone:
@@ -11,6 +11,7 @@ class Drone:
         self.my_cells = [] # celle nella zona del drone, sono aggiornate da grid.calc_zones()
         self.target = (0,0) # cella target verso cui si muove il drone
         self.lineofsight = los # imposta il campo visivo del drone
+        self.balance = 0.7 # bilancia il valore della cella con la distanza dal drone
         # dove viene generato il drone
         if rand: # posizione randomica
             lx,ly = self.grid.get_bound()
@@ -22,7 +23,7 @@ class Drone:
             self.y = y
         else: # posizione assegnata dall'utente
             if self.grid.is_wall(x, y) or not self.grid.is_within_bounds(x, y): # se la posizione non è valida
-                print("Posizione non valida, trovo un nuova posizione vicina.")
+                print(f"Posizione: {x},{y} non valida, trovo un nuova posizione vicina.", end=" ")
                 x, y = self.grid.neerest_free(x, y)
                 print(f"La nuova posizione è: {x},{y}")
             self.x = x
@@ -172,9 +173,15 @@ class Drone:
         # per ogni cella appartenente al drone
         for tup in self.my_cells:
             px, py = tup
+            # calcola la distanza euclidea tra la cella e il drone
+            dist = math.dist((self.x, self.y), (px, py))
+            # calcola il valore della cella
             temp = self.grid.cell_circle_value(px, py, self)
-            if temp > max_possibile:
-                max_possibile = temp
+            # calcola il valore della cella bilanciato dalla distanza
+            cel_val = temp - (dist * self.balance)
+            # se il valore è maggiore del massimo valore possibile
+            if cel_val > max_possibile:
+                max_possibile = cel_val
                 mtup = tup
         # imposta come target la cella che massimizza il valore
         self.set_target(mtup[0], mtup[1])
