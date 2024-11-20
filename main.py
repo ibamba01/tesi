@@ -9,13 +9,9 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 
-def generate_heatmap_with_colors(grid):
+def color_heatmap(grid):
     # Recupera le dimensioni della griglia
     r_ighe, c_olonne = grid.get_bound()
-
-    # Estrai i valori delle celle e degli agenti
-    valori = grid.get_value_grid()
-    agenti = grid.get_agent_grid()
 
     # Mappa di colori per gli agenti
     lista_agenti = grid.dronelist_set()
@@ -27,21 +23,41 @@ def generate_heatmap_with_colors(grid):
     heatmap = np.zeros((r_ighe, c_olonne, 4))  # 4 canali: R, G, B, Alpha (trasparenza)
     for i in range(r_ighe):
         for j in range(c_olonne):
-            agent = agenti[i, j]
-            value = valori[i, j]
-            if agent is not None:
+            agent = grid.get_agent(i, j)
+            value = grid.get_value(i, j)
+            if value == 'WALL':
+                heatmap[i, j] = [0.502, 0.502, 0.502, 1.0]
+            elif agent is not None:
                 # recupera il colore dell'agente
                 colore = colori_agenti[agent]
-                # assegna l'intensità del colore in base al valore della cella
+                # assegna l'intensità del colore in base al valore della cella, [:3] serve a estrarre solo i primi 3
                 heatmap[i, j] = [c * value for c in colore[:3]] + [1.0]  # RGB con trasparenza Alpha = 1.0
             else:
                 heatmap[i, j] = [0.0, 0.0, 0.0, 1.0]  # Nero per celle non esplorate
+    for dd in lista_agenti:
+        px,py = dd.get_position()
+        heatmap[px,py] = [1.0, 1.0, 1.0, 1.0]  # Rosso per la posizione del drone
 
     # Visualizza la heatmap
     plt.figure(figsize=(8, 8))
     plt.imshow(heatmap, interpolation='nearest')
     #plt.colorbar(plt.cm.ScalarMappable(cmap="viridis"), label="Valore")
     plt.title("Heatmap delle celle esplorate")
+    plt.show()
+
+def partition_heatmap(grid):
+    r_ighe, c_olonne = grid.get_bound()
+    lista_agenti = grid.dronelist_set()
+    colori_agenti = {agent: plt.cm.tab10(i / max(1, len(lista_agenti) - 1)) for i, agent in enumerate(lista_agenti)}
+    heatmap = np.zeros((r_ighe, c_olonne, 4))
+    for dd in lista_agenti:
+        for cell in dd.my_cells:
+            i,j = cell
+            colore = colori_agenti[dd]
+            heatmap[i, j] = [c for c in colore[:3]] + [1.0]
+    plt.figure(figsize=(8, 8))
+    plt.imshow(heatmap, interpolation='nearest')
+    plt.title("Heatmap della partizione")
     plt.show()
 
 def uniform_heatmap(grid):
@@ -55,20 +71,20 @@ def uniform_heatmap(grid):
 if __name__ == '__main__':
     righe = 40
     colonne = 40
-    griglia = mappa.MapGrid(righe, colonne)
+    griglia = mappa.MapGrid(righe, colonne, has_wall=True)
 
-    drone_1 = drone.Drone(griglia, random.randint(0, righe), random.randint(0, colonne), los = 4)
-    drone_2 = drone.Drone(griglia, random.randint(0, righe), random.randint(0, colonne), los = 4)
-    drone_3 = drone.Drone(griglia, random.randint(0, righe), random.randint(0, colonne), los = 4)
-    drone_4 = drone.Drone(griglia, random.randint(0, righe), random.randint(0, colonne), los = 4)
+    drone_1 = drone.Drone(griglia, rand=True, los=2)
+    drone_2 = drone.Drone(griglia, rand=True, los=2)
+    drone_3 = drone.Drone(griglia, rand=True, los=2)
+    drone_4 = drone.Drone(griglia, rand=True, los=2)
 
     max_valor = 0
     t_turn = 0
     media = 0
     for t in range(200):
         griglia.start()
-        if t % 10 == 0:
-            generate_heatmap_with_colors(griglia)
+        if t % 10 == 0: # da cambiare e mettere a 1 (a ogni iterazione)
+            color_heatmap(griglia)
             media += griglia.map_knoledge()
             temp=griglia.map_knoledge()
             if temp > max_valor:

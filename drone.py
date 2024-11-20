@@ -14,18 +14,19 @@ class Drone:
         # dove viene generato il drone
         if rand: # posizione randomica
             lx,ly = self.grid.get_bound()
-            self.x = random.randint(0, lx - 1)
-            self.y = random.randint(0, ly - 1)
-        elif self.grid.is_within_bounds(x, y): # posizione assegnata dall'utente
+            x = random.randint(0, lx - 1)
+            y = random.randint(0, ly - 1)
+            if self.grid.is_wall(x, y):
+                x, y = self.grid.neerest_free(x, y)
             self.x = x
             self.y = y
-        else: # posizione non valida
-            if not self.grid.is_occupied(0, 0):
-                self.x = 0
-                self.y = 0
-                raise ValueError("Posizione iniziale fuori dai limiti della griglia, inizializzato a 0,0")
-            else:
-                raise ValueError("Posizione iniziale fuori dai limiti della griglia, e origine occupata")
+        else: # posizione assegnata dall'utente
+            if self.grid.is_wall(x, y) or not self.grid.is_within_bounds(x, y): # se la posizione non è valida
+                print("Posizione non valida, trovo un nuova posizione vicina.")
+                x, y = self.grid.neerest_free(x, y)
+                print(f"La nuova posizione è: {x},{y}")
+            self.x = x
+            self.y = y
         # aggiunge il drone alla lista dei droni sulla mappa
         self.grid.add_drone(self)
 
@@ -95,29 +96,28 @@ class Drone:
         #print(f"La posizione attuale è:",self.get_position())
 
     def move(self, x=0, y=0):
-        if self.grid.is_within_bounds(self.x, self.y + y):
+        if self.grid.is_within_bounds(self.x, self.y + y) and not self.grid.is_wall(self.x, self.y + y):
             self.y += y
-        if self.grid.is_within_bounds(self.x + x, self.y):
+        if self.grid.is_within_bounds(self.x + x, self.y) and not self.grid.is_wall(self.x + x, self.y) :
             self.x += x
         else:
             print("Movimento non consentito: fuori dai limiti della griglia.")
         #print(f"La posizione attuale è:",self.get_position())
 
     def to_target(self):
-        # Posizione attuale del drone
         current_x, current_y = self.get_position()
         # Coordinate del target
         target_x, target_y = self.target
 
-        # Calcola la direzione del movimento
         move_x, move_y = 0, 0
 
-        # Determina il movimento lungo l'asse x
+        # determina il movimento lungo l'asse x
         if current_x < target_x:
             move_x = 1
         elif current_x > target_x:
             move_x = -1
-        # Determina il movimento lungo l'asse y
+
+        # determina il movimento lungo l'asse y
         if current_y < target_y:
             move_y = 1
         elif current_y > target_y:
@@ -130,12 +130,38 @@ class Drone:
         posx, posy = self.get_position()
         for i in range(-self.lineofsight, self.lineofsight + 1):
             for j in range(-self.lineofsight, self.lineofsight + 1):
-                # solo se la cella è dentro i limiti della griglia
-                if  self.grid.is_within_bounds(posx + i, posy + j):
-                    # calcola la distanza euclidea
-                    distance = math.sqrt(i ** 2 + j ** 2)
-                    if distance <= self.lineofsight: # se la cella è dentro il raggio di lineofsight
-                        self.grid.set_cell(posx + i, posy + j, 1.0, agente=self) # Imposta 1 per le celle visibili
+                if i == 0 and j == 0:
+                    self.grid.set_cell(posx + i, posy + j, 1.0, agente=self)
+                    continue
+                # Controlla i limiti della griglia
+                if not self.grid.is_within_bounds(posx + i, posy + j):
+                    continue
+                # Calcola la distanza euclidea
+                distance = math.sqrt(i ** 2 + j ** 2)
+                # Controlla se la cella è fuori dal raggio di visione
+                if distance > self.lineofsight:
+                    continue
+                # Calcola il passo incrementale lungo la direzione
+                step_x, step_y = i / distance, j / distance
+                steps = int(distance)
+
+                # Verifica ogni cella lungo la linea di vista
+                x, y = posx, posy
+                blocked = False
+                for _ in range(steps):
+                    x += step_x
+                    y += step_y
+                    cell_x, cell_y = round(x), round(y)
+
+                    if not self.grid.is_within_bounds(cell_x, cell_y):
+                        break
+                    if self.grid.is_wall(cell_x, cell_y):
+                        blocked = True
+                        break
+
+                # Se la linea non è bloccata, imposta la cella come visibile
+                if not blocked:
+                    self.grid.set_cell(posx + i, posy + j, 1.0, agente=self)
 
     # calcola quale cella massimizza il valore delle celle viste
     def calc_target(self):
@@ -154,37 +180,30 @@ class Drone:
         self.set_target(mtup[0], mtup[1])
 
 
-    def calc_target_circ(self, max_radius=5):
+    def calc_target_circ(self, max_radius=6):
         """
         Calcola il bersaglio del drone esplorando in modo progressivo anelli circolari concentrici
         intorno alla posizione attuale del drone.
         """
-        # Posizione corrente del drone
-        current_x, current_y = self.get_position()
-        # Variabili per memorizzare il massimo valore trovato e la cella corrispondente
+        posdx, posdy = self.get_position()
         max_possibile = 0
-        mtup = (current_x, current_y)
+        mtup = (posdx, posdy)
 
         # Esplora progressivamente anelli concentrici
         for r in range(1, max_radius + 1):
-            # Itera su tutte le celle nell'anello
+            # itera su tutte le celle nell'anello
             for dx in range(-r, r + 1):
                 for dy in range(-r, r + 1):
-                    # Considera solo le celle esattamente sull'anello
+                    # controlla se la cella è sulla circonferenza dell'anello
                     if abs(dx) != r and abs(dy) != r:
                         continue
+                    nx, ny = posdx + dx, posdy + dy
 
-                    # Calcola la posizione della cella
-                    nx, ny = current_x + dx, current_y + dy
-
-                    # Controlla se la cella è valida e all'interno dei limiti
-                    if self.is_my_cell(nx, ny) and self.grid.is_within_bounds(nx, ny):
-                        # Calcola il valore della cella
+                    if self.is_my_cell(nx, ny) and self.grid.is_within_bounds(nx, ny) and not self.grid.is_wall(nx, ny):
                         temp = self.grid.cell_circle_value(nx, ny, self)
-                        # Aggiorna il massimo se necessario
+
                         if temp > max_possibile:
                             max_possibile = temp
                             mtup = (nx, ny)
 
-    # Imposta la cella che massimizza il valore come bersaglio
         self.set_target(mtup[0], mtup[1])

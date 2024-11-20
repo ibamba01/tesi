@@ -2,8 +2,9 @@ import numpy as np
 import random
 import math
 class MapGrid:
-    def __init__(self, righe, colonne, valore_iniziale=0.0, agente_iniziale = None, rando=False, perdita=0.98):
+    def __init__(self, righe, colonne, valore_iniziale=0.0, agente_iniziale=None, rando=False, has_wall=False, rando_wall=False, perdita=0.98):
         self.perdita = perdita
+        self.has_wall = has_wall
         # Crea una griglia di dimensioni (rows x cols) con valore iniziale specificato
         if rando:
             # crea una matrice vuota, n x m in cui ogni cella è un oggetto complesso
@@ -24,6 +25,26 @@ class MapGrid:
                 for j in range(colonne):
                     self.grid[i, j] = (valore_iniziale, agente_iniziale)
         self.dronelist = [] # mantengo una lista di tutte le istanze dei droni vivi
+        if has_wall:
+            if rando_wall:
+                # Posiziona pareti casuali
+                self.num_walls = int(0.1 * righe * colonne)  # il 10% delle celle sono pareti
+                for ii in range(self.num_walls):
+                    x = random.randint(0, righe - 1)
+                    y = random.randint(0, colonne - 1)
+                    self.grid[x, y] = ('WALL', None)
+            else:
+                self.num_walls = 0
+                # Posiziona pareti predefinite (esempio: contorno della griglia)
+                for i in range(righe):
+                    self.grid[i, 0] = ('WALL', None)  # Bordo sinistro
+                    self.grid[i, colonne - 1] = ('WALL', None)  # Bordo destro
+                    self.num_walls += 2
+                    self.grid[i, colonne // 2] = ('WALL', None)
+                for j in range(colonne):
+                    self.grid[0, j] = ('WALL', None)  # Bordo superiore
+                    self.grid[righe - 1, j] = ('WALL', None)  # Bordo inferiore
+                    self.num_walls += 2
 
     # fa partire la logica dei droni
     def start(self):
@@ -63,6 +84,7 @@ class MapGrid:
     def dronelist_set(self):
         agentlist = list(set(dd for dd in self.dronelist))
         return agentlist
+
 # ----------------------------------------set fun-----------------------------------------------------------------------
     def set_cell(self, row, col, value=None, agente=None):
         # controllo se la cella da modificare è valida
@@ -138,6 +160,11 @@ class MapGrid:
             if x == pdx and y == pdy:
                 occ = True
         return occ
+
+    def is_wall(self, x, y):
+        if self.get_value(x, y) == 'WALL':
+            return True
+        return False
 # ----------------------------------------print fun---------------------------------------------------------------------
     def display(self):
         # Stampa la griglia
@@ -148,24 +175,27 @@ class MapGrid:
         for i in range(self.grid.shape[0]):
             for j in range(self.grid.shape[1]):
                 temp = self.get_value(i, j)
+                if temp == 'WALL':
+                    temp = 0 # le pareti non contano
                 tot += temp
-        return tot / (self.grid.shape[0] * self.grid.shape[1])
+        return tot / ((self.grid.shape[0] * self.grid.shape[1]) - self.num_walls) # tolgo le pareti dal conteggio
 
 
 # ----------------------------------------logic fun---------------------------------------------------------------------
     def dimenticanza(self, value):
         return value * self.perdita
 
-    def knloss(self):
+    def knloss(self): # aggiornato per le pareti
         # Applica la perdita di conoscenza solo ai valori numerici
         for i in range(self.grid.shape[0]):
             for j in range(self.grid.shape[1]):
                 value, agent = self.grid[i, j]  # Ottieni la tupla (valore, agente)
-                # Applica la perdita al valore e ricrea la tupla
-                self.grid[i, j] = (self.dimenticanza(value), agent)
+                if value != 'WALL':
+                    # Applica la perdita al valore e ricrea la tupla
+                    self.grid[i, j] = (self.dimenticanza(value), agent)
 
     # partizione di Voronoi
-    def partizione(self):
+    def partizione(self): # aggiornato per le pareti
         # libero le celle assegnate ai droni
         self.dronelist_clear_cells()
         # per ogni cella della griglia e solo quelle
@@ -174,7 +204,8 @@ class MapGrid:
                 # per ogni cella viene calcolato il drone più vicino
                 min_distance = -1 # -1 indica che non è stata ancora calcolata la distanza
                 min_drone = None # nessun drone assegnato
-
+                if self.get_value(i, j) == 'WALL':
+                    continue
                 px = i # posizione x della cella
                 py = j # posizione y della cella
                 for dd in self.dronelist: # per ogni drone creato
@@ -189,7 +220,7 @@ class MapGrid:
                 min_drone.add_cell( (i,j) ) # passo una tupla contenente la pos della cella
 
     # data una posizione e un raggio, calcola il la differenza totale del valore delle celle vicine se fossero settate a 1
-    def cell_circle_value(self, posx, posy, drone):
+    def cell_circle_value(self, posx, posy, drone): # aggiornato per le pareti
         valore_possibile = 0.0
         raggio = drone.lineofsight
         # deve calcolare il valore totale delle celle vicine alla posizione passata in un raggio circolare
@@ -198,7 +229,6 @@ class MapGrid:
             for j in range(-raggio, raggio + 1):
                 # Calcola la posizione della cella vicina
                 nx, ny = posx + i, posy + j
-
                 # Calcola la distanza euclidea dalla posizione centrale
                 distanza = math.sqrt(i ** 2 + j ** 2)
 
@@ -206,10 +236,25 @@ class MapGrid:
                 if ( (nx, ny) in drone.my_cells ) and ( distanza <= raggio ): # non controllo se è dentro i limiti della griglia in quanto la cella deve appartenere alle celle del drone
                     # calcola se la cella è già stata visitata
                     vv = self.get_value(nx, ny)
-                    if vv == 0.0:
+                    if vv == 'WALL': # se la cella è una parete
+                        valore_possibile += 0.0
+                    elif vv == 0.0:
                         valore_possibile += 4.0 # per aiutare i bordi non scoperti
                     elif vv <= 0.25:
                         valore_possibile += (2.0 - vv) # per aiutare i bordi
                     else: # se la cella non è stata visitata, le assegno un "premio" per invogliare il drone a visitarla
                         valore_possibile += (1.0 - vv)
         return valore_possibile
+
+    def neerest_free(self, i, j):
+        for r in range(1, 11 + 1):
+            # itera su tutte le celle nell'anello
+            for dx in range(-r, r + 1):
+                for dy in range(-r, r + 1):
+                    if abs(dx) != r and abs(dy) != r: # evita di controllare le celle interne all'anello già controllate
+                        continue
+                    nx, ny = i + dx, j + dy
+                    if self.is_within_bounds(nx, ny) and not self.is_wall(nx, ny):
+                        return nx, ny
+        # Fallback se nessuna cella è valida
+        return None
