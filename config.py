@@ -2,6 +2,29 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from matplotlib.animation import FuncAnimation
+from IPython import display
+import subprocess
+def animate_heatmap(input_folder="immagini/color_heat/",output_gif="colr_heatmap.gif",interval=200):
+    # Delay in centesimi di secondo
+    delay = interval // 10
+    # Ottieni tutti i file PNG dalla cartella e ordinali per nome
+    image_files = sorted( [os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.endswith(".png")] )
+
+    # Verifica che ci siano immagini nella cartella
+    if not image_files:
+        print("Nessuna immagine trovata nella cartella specificata.")
+        return
+
+    # Unisci i file per il comando convert
+    image_files_str = ' '.join(image_files)
+    # Comando per convertire le immagini in una GIF
+    cmd = f"magick convert -delay {delay} {image_files_str} {output_gif}"
+    # Esegui il comando
+    subprocess.run(cmd, shell=True)
+    print(f"GIF creata con successo: {output_gif}")
+
+heatmap_counter = 0
 
 def svuota_cartella(cartella):
     for root, dirs, files in os.walk(cartella):
@@ -9,7 +32,7 @@ def svuota_cartella(cartella):
             file_path = os.path.join(root, file)
             os.remove(file_path)  # Elimina il file
 
-heatmap_counter = 0
+
 def color_heatmap(grid):
     global heatmap_counter  # Usa la variabile globale
     # Recupera le dimensioni della griglia

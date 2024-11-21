@@ -1,6 +1,5 @@
 import math
 import random
-from dis import distb
 
 
 class Drone:
@@ -30,6 +29,10 @@ class Drone:
             self.y = y
         # aggiunge il drone alla lista dei droni sulla mappa
         self.grid.add_drone(self)
+        if self.grid.has_wall: # non serve allocarli se non ci sono muri
+            self.percorsi = {}  # Percorsi ottimali verso le celle della zona
+            self.distanze = []  # Distanze minime verso le celle della zona
+
 
     def __del__(self):
         if self in self.grid.dronelist:
@@ -42,6 +45,9 @@ class Drone:
     def clear_cell(self):
         self.my_cells.clear()
 
+    def clear_percorsi(self):
+        self.percorsi.clear()
+
     def is_my_cell(self, x, y):
         return (x, y) in self.my_cells
 #----------------------------------------get fun------------------------------------------------------------------------
@@ -49,6 +55,13 @@ class Drone:
         # Restituisce la posizione attuale del drone
         return self.x, self.y
 
+
+    def set_percorsi(self, percorsi):
+        self.percorsi = percorsi
+
+
+    def get_percorso_per_cella(self, cella):
+        return self.percorsi.get(cella, [])
 #----------------------------------------set fun------------------------------------------------------------------------
     def set_target(self, x, y):
         if self.grid.is_within_bounds(x, y):
@@ -164,6 +177,7 @@ class Drone:
                 if not blocked:
                     self.grid.set_cell(posx + i, posy + j, 1.0, agente=self)
 
+# --------------------------------------- calcolo target ---------------------------------------------------------------
     # calcola quale cella massimizza il valore delle celle viste
     def calc_target(self):
         # il valore massimo che posso ottenere chiamando la funzione cell_circle_value su quella cella
@@ -186,12 +200,7 @@ class Drone:
         # imposta come target la cella che massimizza il valore
         self.set_target(mtup[0], mtup[1])
 
-
     def calc_target_circ(self, max_radius=6):
-        """
-        Calcola il bersaglio del drone esplorando in modo progressivo anelli circolari concentrici
-        intorno alla posizione attuale del drone.
-        """
         posdx, posdy = self.get_position()
         max_possibile = 0
         mtup = (posdx, posdy)
@@ -214,3 +223,39 @@ class Drone:
                             mtup = (nx, ny)
 
         self.set_target(mtup[0], mtup[1])
+
+#----------------------------------------dijkstra-----------------------------------------------------------------------
+    def calc_target_dijkstra(self):
+        max_possible = 0
+        mtup = (0, 0)
+        for tup in self.my_cells: # per ogni cella appartenente al drone, (non sono wall o fuori dalla griglia)
+            if self.grid.is_wall(tup[0], tup[1]) or not self.grid.is_within_bounds(tup[0], tup[1]):
+                continue
+            px, py = tup
+            temp = self.grid.cell_circle_value(px, py, self)
+            cel_val = temp - (self.distanze[tup] * self.balance)
+            if temp > max_possible:
+                max_possible = temp
+                mtup = tup
+        self.set_target(mtup[0], mtup[1])
+
+    def ricostruisci_percorso(self):
+        predecessore = self.percorsi
+        bersaglio = self.target
+        percorso = []
+        while bersaglio is not None: #il problema diventa quando trovo il target ma non ho un predecessore
+            percorso.append(bersaglio)
+            if bersaglio == (self.x, self.y):
+                break
+            if bersaglio not in predecessore:
+                raise ValueError(f"Cella {bersaglio} non trovata nei predecessori. Percorso non valido.")
+            bersaglio = predecessore.get(bersaglio, None)
+        return percorso[::-1]  # Inverti il percorso, ora la posizione 0 contiene la posizione attuale
+
+    def to_target_dijkstra(self):
+        percorso = self.ricostruisci_percorso()
+        if len(percorso) > 0:
+            x, y = percorso[1]
+            self.move(x - self.x, y - self.y)
+        else:
+            print("Percorso non trovato.")
