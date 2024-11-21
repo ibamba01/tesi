@@ -234,8 +234,8 @@ class Drone:
             px, py = tup
             temp = self.grid.cell_circle_value(px, py, self)
             cel_val = temp - (self.distanze[tup] * self.balance)
-            if temp > max_possible:
-                max_possible = temp
+            if cel_val > max_possible:
+                max_possible = cel_val
                 mtup = tup
         self.set_target(mtup[0], mtup[1])
 
