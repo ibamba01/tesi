@@ -11,6 +11,7 @@ class Drone:
         self.target = (0,0) # cella target verso cui si muove il drone
         self.lineofsight = los # imposta il campo visivo del drone
         self.balance = 0.7 # bilancia il valore della cella con la distanza dal drone
+        self.path = [] # contiene il percorso verso il target
         # dove viene generato il drone
         if rand: # posizione randomica
             lx,ly = self.grid.get_bound()
@@ -50,6 +51,8 @@ class Drone:
 
     def clear_distanze(self):
         self.distanze = {}
+    def clear_path(self):
+        self.path.clear()
 
     def is_my_cell(self, x, y):
         return (x, y) in self.my_cells
@@ -253,11 +256,13 @@ class Drone:
             if bersaglio not in predecessore:
                 raise ValueError(f"Cella {bersaglio} non trovata nei predecessori. Percorso non valido.")
             bersaglio = predecessore.get(bersaglio, None)
+        self.path = percorso[::-1]
         return percorso[::-1]  # Inverti il percorso, ora la posizione 0 contiene la posizione attuale
 
     def to_target_dijkstra(self):
         percorso = self.ricostruisci_percorso()
         if len(percorso) > 0:
+
             x, y = percorso[0]
             self.move(x - self.x, y - self.y)
         else:

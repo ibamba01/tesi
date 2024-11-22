@@ -103,6 +103,10 @@ class MapGrid:
         for dd in self.dronelist:
             dd.clear_percorsi()
 
+    def dronelist_clear_path(self):
+        for dd in self.dronelist:
+            dd.clear_path()
+
     # rimuove tutte le distanze assegnate ai droni
     def dronelist_clear_distanze(self):
         for dd in self.dronelist:
@@ -325,6 +329,7 @@ class MapGrid:
         self.dronelist_clear_cells()
         self.dronelist_clear_percorsi()
         self.dronelist_clear_distanze()
+        self.dronelist_clear_path()
 
         # andrà a contenere le matrici delle distanze
         all_distances = []

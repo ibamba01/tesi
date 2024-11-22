@@ -92,6 +92,8 @@ def partition_heatmap(grid):
             i,j = cell
             colore = colori_agenti[dd]
             heatmap[i, j] = [c for c in colore[:3]] + [1.0]
+        i, j = dd.get_position()
+        heatmap[i, j] = [0.0, 0.0, 0.0, 1.0]
     filename = f'immagini/partition_heat/part_map_{partition_counter}.png'
     partition_counter += 1
     os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -106,6 +108,30 @@ def uniform_heatmap(grid):
     sns.set_theme(style="darkgrid")
     ax = sns.heatmap(mgrid, vmin=0, vmax=1)
     plt.show()
+per_counter = 0
+def percorso_heatmap(grid):
+    global per_counter
+    r_ighe, c_olonne = grid.get_bound()
+    lista_agenti = grid.dronelist_set()
+    colori_agenti = {agent: plt.cm.tab10(i / max(1, len(lista_agenti) - 1)) for i, agent in enumerate(lista_agenti)}
+    heatmap = np.zeros((r_ighe, c_olonne, 4))
+    for dd in lista_agenti:
+        for cell in dd.path:
+            i,j = cell
+            colore = colori_agenti[dd]
+            heatmap[i, j] = [c for c in colore[:3]] + [1.0]
+        i, j = dd.get_position()
+        heatmap[i, j] = [0.0, 0.0, 0.0, 1.0]
+        i, j = dd.target
+        heatmap[i, j] = [0.0, 1.0, 0.0, 1.0]
+    filename = f'immagini/percorso_heat/percorso_map_{per_counter}.png'
+    per_counter += 1
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    plt.figure(figsize=(8, 8))
+    plt.imshow(heatmap, interpolation='nearest')
+    plt.title("Heatmap del percorso")
+    plt.savefig(filename)
+    plt.show()
 
 def heatmap(grid, map="u"):
     if map == "u": #uniform
@@ -114,3 +140,12 @@ def heatmap(grid, map="u"):
         color_heatmap(grid)
     elif map == "p": #partition
         partition_heatmap(grid)
+    elif map == "e": #percorso
+        percorso_heatmap(grid)
+    elif map == "a": #all
+        color_heatmap(grid)
+        partition_heatmap(grid)
+        percorso_heatmap(grid)
+    else: #error
+        print("Mappa non valida")
+        return

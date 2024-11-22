@@ -19,9 +19,9 @@ if __name__ == '__main__':
     for t in range(m):
         griglia.start(1)
 
-        cfg.heatmap(griglia, "c",) # ricorda u = uniform, c = color, p = partition
-        cfg.heatmap(griglia, "p")
+        cfg.heatmap(griglia, "a",) # ricorda u = uniform, c = color, p = partition
         media += griglia.map_knoledge()
         temp=griglia.map_knoledge()
     cfg.create_gif('immagini/color_heat','color_map_',"color", m)
     cfg.create_gif('immagini/partition_heat','part_map_', "partition", m)
+    cfg.create_gif('immagini/percorso_heat','percorso_map_', "percorso", m)
