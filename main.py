@@ -22,5 +22,3 @@ if __name__ == '__main__':
         cfg.heatmap(griglia, "c") # ricorda u = uniform, c = color, p = partition
         media += griglia.map_knoledge()
         temp=griglia.map_knoledge()
-
-    cfg.animate_heatmap() # crea il gif

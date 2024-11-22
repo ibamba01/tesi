@@ -48,6 +48,9 @@ class Drone:
     def clear_percorsi(self):
         self.percorsi.clear()
 
+
+
+
     def is_my_cell(self, x, y):
         return (x, y) in self.my_cells
 #----------------------------------------get fun------------------------------------------------------------------------

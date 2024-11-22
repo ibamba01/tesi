@@ -94,9 +94,15 @@ class MapGrid:
     def dronelist_clear_cells(self):
         for dd in self.dronelist:
             dd.clear_cell()
+
     def dronelist_clear_percorsi(self):
         for dd in self.dronelist:
-            dd.clear_percorso()
+            dd.clear_percorsi()
+
+    # rimuove tutte le distanze assegnate ai droni
+    def dronelist_clear_distanze(self):
+        for dd in self.dronelist:
+            dd.clear_distanze()
 
     def dronelist_set(self):
         agentlist = list(set(dd for dd in self.dronelist))
@@ -313,6 +319,7 @@ class MapGrid:
 
     def partizione_dijkstra(self):
         self.dronelist_clear_cells()
+        self.dronelist_clear_percorsi()
 
         # andrà a contenere le matrici delle distanze
         all_distances = []

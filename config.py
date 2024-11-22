@@ -2,9 +2,33 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 import os
+from wand.image import Image
+
 
 
 heatmap_counter = 0
+
+# crea una gif
+def create_gif(input_folder='C:/Users/Pietro/PycharmProjects/progettoLaurea/immagini/color_heat', name='output', n=200, delay=20):
+    # salva il path delle immagini
+    input_folder = rf'{input_folder}'
+    # ottiene tutti i file PNG dalla cartella in ordine di nome
+    image_files = [f"{input_folder}/heat_map_{i}.png" for i in range(n)]
+    # Nome del file GIF in output
+    output_gif = f'{name}.gif'
+    # Crea una GIF animata con Wand
+    with Image() as gif:
+        for file in image_files:
+            with Image(filename=file) as img:
+                gif.sequence.append(img)
+
+        # Imposta i parametri della GIF
+        for frame in gif.sequence:
+            frame.delay = delay  # Delay di n centesimi di secondo (n ms)
+
+        gif.type = 'optimize'
+        gif.loop_count = 0  # Loop infinito
+        gif.save(filename=output_gif)
 
 def svuota_cartella(cartella):
     for root, dirs, files in os.walk(cartella):
