@@ -116,9 +116,9 @@ class Drone:
         #print(f"La posizione attuale è:",self.get_position())
 
     def move(self, x=0, y=0):
-        if self.grid.is_within_bounds(self.x, self.y + y) and not self.grid.is_wall(self.x, self.y + y):
+
+        if self.grid.is_within_bounds(self.x + x, self.y + y) and not self.grid.is_wall(self.x + x, self.y + y):
             self.y += y
-        if self.grid.is_within_bounds(self.x + x, self.y) and not self.grid.is_wall(self.x + x, self.y) :
             self.x += x
         else:
             print("Movimento non consentito: fuori dai limiti della griglia.")

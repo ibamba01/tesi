@@ -303,7 +303,7 @@ class MapGrid:
         # Dizionario per tracciare il percorso
         prev = {}
         # Direzioni per esplorare le celle adiacenti
-        directions = [(-1, 0), (1, 0),(0, -1), (0, 1)]
+        directions = [(-1, 0), (1, 0),(0, -1), (0, 1), (1, 1), (-1, -1), (1, -1), (-1, 1)]
         while pq:
             current_dist, x, y = heapq.heappop(pq)
             # Se la distanza corrente è maggiore di quella salvata, ignora
