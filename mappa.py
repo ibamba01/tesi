@@ -7,10 +7,9 @@ class MapGrid:
     def __init__(self, righe, colonne, valore_iniziale=0.0, agente_iniziale=None, rando=False, has_wall=False, rando_wall=False, perdita=0.98, wall_density=0.1):
         self.perdita = perdita
         self.has_wall = has_wall
+        self.grid = np.empty((righe, colonne), dtype=object)
         # Crea una griglia di dimensioni (rows x cols) con valore iniziale specificato
         if rando:
-            # crea una matrice vuota, n x m in cui ogni cella è un oggetto complesso
-            self.grid = np.empty((righe, colonne), dtype=object)
             # itera su tutte le celle
             for i in range(righe):
                 for j in range(colonne):
@@ -18,11 +17,6 @@ class MapGrid:
                     valore_casuale = round(random.uniform(0, 1), 2)  # Valore casuale tra 0 e 1, arrotondato a 2 decimali
                     self.grid[i, j] = (valore_casuale, agente_iniziale)
         else:
-            # dtype = object indica che ogni cella è un oggetto complesso in questo caso contiene una tupla
-            # crea una griglia n (righe) x m (colonne), ogni cella è impostata a valore_iniziale default = 0 e "appartiene" a Agente iniziale default = nessuno
-            # crea una griglia vuota, n x m
-            self.grid = np.empty((righe, colonne), dtype=object)
-            # iteriamo su tutte le celle della griglia inizializzando con il valore desiderato
             for i in range(righe):
                 for j in range(colonne):
                     self.grid[i, j] = (valore_iniziale, agente_iniziale)
@@ -50,8 +44,16 @@ class MapGrid:
                     self.grid[righe - 1, j] = ('WALL', None)  # Bordo inferiore
                     self.num_walls += 2
 
+    def start(self, choise):
+        if choise == 0:
+            self.start_with_voronoi()
+        elif choise == 1:
+            self.start_with_dijkstra()
+        else:
+            raise ValueError("utilizzare 0 per Voronoi o 1 per Dijkstra")
+
     # fa partire la logica dei droni
-    def start(self):
+    def start_with_voronoi(self):
         # perdita di pacchetti per turno
         self.knloss()
         # partizione di Voronoi
@@ -70,6 +72,8 @@ class MapGrid:
             # utilizza la distanza di Dijkstra per calcolare il percorso
             drone.calc_target_dijkstra()
             drone.to_target_dijkstra()
+            drone.clear_distanze()
+            drone.clear_percorsi()
             drone.vista_drone()
 
 # ----------------------------------------gestione droni----------------------------------------------------------------
@@ -314,12 +318,13 @@ class MapGrid:
                         dist[nx, ny] = new_dist
                         prev[(nx, ny)] = (x, y)
                         heapq.heappush(pq, (new_dist, nx, ny))
-
+        pq = []
         return dist, prev
 
     def partizione_dijkstra(self):
         self.dronelist_clear_cells()
         self.dronelist_clear_percorsi()
+        self.dronelist_clear_distanze()
 
         # andrà a contenere le matrici delle distanze
         all_distances = []

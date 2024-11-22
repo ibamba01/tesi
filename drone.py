@@ -48,8 +48,8 @@ class Drone:
     def clear_percorsi(self):
         self.percorsi.clear()
 
-
-
+    def clear_distanze(self):
+        self.distanze = {}
 
     def is_my_cell(self, x, y):
         return (x, y) in self.my_cells
@@ -247,9 +247,9 @@ class Drone:
         bersaglio = self.target
         percorso = []
         while bersaglio is not None: #il problema diventa quando trovo il target ma non ho un predecessore
-            percorso.append(bersaglio)
             if bersaglio == (self.x, self.y):
                 break
+            percorso.append(bersaglio)
             if bersaglio not in predecessore:
                 raise ValueError(f"Cella {bersaglio} non trovata nei predecessori. Percorso non valido.")
             bersaglio = predecessore.get(bersaglio, None)
@@ -258,7 +258,7 @@ class Drone:
     def to_target_dijkstra(self):
         percorso = self.ricostruisci_percorso()
         if len(percorso) > 0:
-            x, y = percorso[1]
+            x, y = percorso[0]
             self.move(x - self.x, y - self.y)
         else:
             print("Percorso non trovato.")

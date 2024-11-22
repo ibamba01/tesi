@@ -6,14 +6,14 @@ from wand.image import Image
 
 
 
-heatmap_counter = 0
-
+color_counter = 0
+partition_counter = 0
 # crea una gif
-def create_gif(input_folder='C:/Users/Pietro/PycharmProjects/progettoLaurea/immagini/color_heat', name='output', n=200, delay=20):
+def create_gif(input_folder='immagini/color_heat', file_name='color_map_', name='output', n=200, delay=20):
     # salva il path delle immagini
     input_folder = rf'{input_folder}'
     # ottiene tutti i file PNG dalla cartella in ordine di nome
-    image_files = [f"{input_folder}/heat_map_{i}.png" for i in range(n)]
+    image_files = [f"{input_folder}/{file_name}{i}.png" for i in range(n)]
     # Nome del file GIF in output
     output_gif = f'{name}.gif'
     # Crea una GIF animata con Wand
@@ -28,7 +28,7 @@ def create_gif(input_folder='C:/Users/Pietro/PycharmProjects/progettoLaurea/imma
 
         gif.type = 'optimize'
         gif.loop_count = 0  # Loop infinito
-        gif.save(filename=output_gif)
+        gif.save(filename=f'immagini/gif/{output_gif}')
 
 def svuota_cartella(cartella):
     for root, dirs, files in os.walk(cartella):
@@ -38,7 +38,7 @@ def svuota_cartella(cartella):
 
 
 def color_heatmap(grid):
-    global heatmap_counter  # Usa la variabile globale
+    global color_counter  # Usa la variabile globale
     # Recupera le dimensioni della griglia
     r_ighe, c_olonne = grid.get_bound()
 
@@ -68,8 +68,8 @@ def color_heatmap(grid):
         heatmap[px,py] = [1.0, 1.0, 1.0, 1.0]  # Rosso per la posizione del drone
 
     # Incrementa il contatore e salva il file
-    filename = f'immagini/color_heat/heat_map_{heatmap_counter}.png'
-    heatmap_counter += 1
+    filename = f'immagini/color_heat/color_map_{color_counter}.png'
+    color_counter += 1
 
     # Visualizza la heatmap
     os.makedirs(os.path.dirname(filename), exist_ok=True)
@@ -82,7 +82,7 @@ def color_heatmap(grid):
 
 
 def partition_heatmap(grid):
-    global heatmap_counter
+    global partition_counter
     r_ighe, c_olonne = grid.get_bound()
     lista_agenti = grid.dronelist_set()
     colori_agenti = {agent: plt.cm.tab10(i / max(1, len(lista_agenti) - 1)) for i, agent in enumerate(lista_agenti)}
@@ -92,8 +92,8 @@ def partition_heatmap(grid):
             i,j = cell
             colore = colori_agenti[dd]
             heatmap[i, j] = [c for c in colore[:3]] + [1.0]
-    filename = f'immagini/partition_heat/part_map_{heatmap_counter}.png'
-    heatmap_counter += 1
+    filename = f'immagini/partition_heat/part_map_{partition_counter}.png'
+    partition_counter += 1
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     plt.figure(figsize=(8, 8))
     plt.imshow(heatmap, interpolation='nearest')
