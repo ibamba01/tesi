@@ -51,6 +51,7 @@ class Drone:
 
     def clear_distanze(self):
         self.distanze = {}
+
     def clear_path(self):
         self.path.clear()
 
