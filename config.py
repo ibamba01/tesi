@@ -28,13 +28,19 @@ def create_gif(input_folder='immagini/color_heat', file_name='color_map_', name=
 
         gif.type = 'optimize'
         gif.loop_count = 0  # Loop infinito
+        os.makedirs(os.path.dirname('immagini/gif'), exist_ok=True)
+
         gif.save(filename=f'immagini/gif/{output_gif}')
 
 def svuota_cartella(cartella):
-    for root, dirs, files in os.walk(cartella):
+    # Itera attraverso la cartella in modo r icorsivo
+    for root, dirs, files in os.walk(cartella, topdown=False):  # topdown=False per gestire prima le sottocartelle
+        # Elimina tutti i file
         for file in files:
             file_path = os.path.join(root, file)
             os.remove(file_path)  # Elimina il file
+
+    print(f"La cartella '{cartella}' è stata svuotata con successo.")
 
 
 def color_heatmap(grid):

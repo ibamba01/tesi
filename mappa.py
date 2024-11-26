@@ -2,6 +2,7 @@ import numpy as np
 import random
 import math
 import heapq
+import generator
 
 class MapGrid:
     def __init__(self, righe, colonne, valore_iniziale=0.0, agente_iniziale=None, rando=False, has_wall=False, rando_wall=False, perdita=0.98, wall_density=0.1):
@@ -33,16 +34,13 @@ class MapGrid:
                     y = random.randint(0, colonne - 1)
                     self.grid[x, y] = ('WALL', None)
             else:
-                # Posiziona pareti predefinite (esempio: contorno della griglia)
-                for i in range(righe):
-                    self.grid[i, 0] = ('WALL', None)  # Bordo sinistro
-                    self.grid[i, colonne - 1] = ('WALL', None)  # Bordo destro
-                    self.num_walls += 2
-                    self.grid[i, colonne // 2] = ('WALL', None)
-                for j in range(colonne):
-                    self.grid[0, j] = ('WALL', None)  # Bordo superiore
-                    self.grid[righe - 1, j] = ('WALL', None)  # Bordo inferiore
-                    self.num_walls += 2
+                self.construct_house()
+
+
+    def construct_house(self):
+        gen = generator.Generator(self.grid)
+        self.grid = gen.update_matrix()
+
 
     def start(self, choise):
         if choise == 0:

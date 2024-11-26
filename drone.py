@@ -161,28 +161,32 @@ class Drone:
                 # Controlla se la cella è fuori dal raggio di visione
                 if distance > self.lineofsight:
                     continue
-                # Calcola il passo incrementale lungo la direzione
-                step_x, step_y = i / distance, j / distance
-                steps = int(distance)
-
-                # Verifica ogni cella lungo la linea di vista
-                x, y = posx, posy
-                blocked = False
-                for _ in range(steps):
-                    x += step_x
-                    y += step_y
-                    cell_x, cell_y = round(x), round(y)
-
-                    if not self.grid.is_within_bounds(cell_x, cell_y):
-                        break
-                    if self.grid.is_wall(cell_x, cell_y):
-                        blocked = True
-                        break
+                # Controlla se la linea di vista è bloccata
+                blocked = self.line_of_sight(i, j, distance, posx, posy)
 
                 # Se la linea non è bloccata, imposta la cella come visibile
                 if not blocked:
                     self.grid.set_cell(posx + i, posy + j, 1.0, agente=self)
 
+    def line_of_sight(self,i,j,distance,posx,posy):
+        # Calcola il passo incrementale lungo la direzione
+        step_x, step_y = i / distance, j / distance
+        steps = int(distance)
+
+        # Verifica ogni cella lungo la linea di vista
+        x, y = posx, posy
+        blocked = False
+        for _ in range(steps):
+            x += step_x
+            y += step_y
+            cell_x, cell_y = round(x), round(y)
+
+            if not self.grid.is_within_bounds(cell_x, cell_y):
+                break
+            if self.grid.is_wall(cell_x, cell_y):
+                blocked = True
+                break
+        return blocked
 # --------------------------------------- calcolo target ---------------------------------------------------------------
     # calcola quale cella massimizza il valore delle celle viste
     def calc_target(self):
