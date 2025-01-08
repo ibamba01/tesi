@@ -2,11 +2,11 @@ from codice import Mappa as Mappa, Config as Config, Drone as Drone
 import json,os
 from datetime import datetime
 
-def test(r, c, m, n, l, f, hw, rw, rp):
+def funtest(r, c, m, n, l, f, hw, rw, rp):
     griglia = Mappa.MapGrid(r, c, has_wall=hw, random_wall=rw, loss_rate=f)
     for ii in range(0, n):
         drone_i = Drone.Drone(griglia, rand=rp, los=l)
-        drone_i.name = f"drone_{i}"
+        drone_i.name = f"drone_{ii}"
     best_kn = 0
     best_turn = 0
     bestchange = 0
@@ -60,7 +60,7 @@ def runnable_show(r, c, m, n, l):
     griglia = Mappa.MapGrid(r, c, has_wall=True)
     for ii in range(0, n):
         drone_i = Drone.Drone(griglia, rand=True, los=l)
-        drone_i.name = f"drone_{i}"
+        drone_i.name = f"drone_{ii}"
     print("Droni creati")
 
     best_kn = 0
@@ -88,8 +88,7 @@ def runnable_show(r, c, m, n, l):
 
     print("Inizio Gif")
     for drone in griglia.dronelist:
-        Config.create_gif(f'immagini/matrix_distance/{drone.name}', '_matrix_map_', f'{drone.name}_distanze',
-                          m)
+        Config.create_gif(f'immagini/matrix_distance/{drone.name}', '_matrix_map_', f'{drone.name}_distanze',m)
     Config.create_gif('immagini/color', 'color_map_', 'color', m)
     Config.create_gif('immagini/percorso', 'percorso_map_', 'percorso', m)
     Config.create_gif('immagini/partition', 'partition_map_', 'partition', m)
@@ -104,7 +103,7 @@ if __name__ == '__main__':
 
     righe = 40
     colonne = 40
-    iteration = 250
+    iteration = 25
     drone_number = 4
     line_of_sight = 2
     loss_factor = 0.98
@@ -112,9 +111,8 @@ if __name__ == '__main__':
     has_wall = True
     random_wall = True
     random_position = True
-
     for i in range(test_iteraction):
-        media += test(righe,colonne,iteration,drone_number,line_of_sight,loss_factor,has_wall,random_wall,random_position) # serve per fare la media
+        media += funtest(righe,colonne,iteration,drone_number,line_of_sight,loss_factor,has_wall,random_wall,random_position) # serve per fare la media
         print(f"Test {i+1} di {test_iteraction}")
     media /= test_iteraction
     print(f"Media: {media}")
@@ -141,4 +139,5 @@ if __name__ == '__main__':
     risultati_list.append(risultati)
     with open(file_path, "w") as file:
         json.dump(risultati_list, file, indent=4)
+
     runnable_show(righe, colonne, iteration, drone_number, line_of_sight)
