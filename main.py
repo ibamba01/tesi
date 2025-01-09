@@ -35,16 +35,16 @@ def running(test_iteraction, righe, colonne, iteration, drone_number, line_of_si
         "conoscenza media globale": media,
     }
     # prende il path dei dati
-    file_path = "risultati.json"
+    external_path = "C:/Users/Pietro/Desktop/risultati.json"
     # aggiunge i dati alla lista
-    if os.path.exists(file_path):
-        with open(file_path, "r") as file:
+    if os.path.exists(external_path):
+        with open(external_path, "r") as file:
             risultati_list = json.load(file)
     else:
         risultati_list = []
     risultati_list.append(risultati)
     # salva i dati
-    with open(file_path, "w") as file:
+    with open(external_path, "w") as file:
         json.dump(risultati_list, file, indent=4)
 
 
@@ -94,7 +94,7 @@ def funtest(r, c, m, n, l, f, hw, rw, rp, alg):
         "turno migliore": best_turn,
         "numero cambiamenti": bestchange,
     }
-    file_path = "dati.json"
+    file_path = "C:/Users/Pietro/Desktop/dati.json"
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
             dati_list = json.load(file)
@@ -146,23 +146,9 @@ def runnable_show(r, c, m, n, l, f, hw, rw, rp, s, alg):
     for drone in griglia.dronelist:
         Config.create_gif(f'immagini/matrix_distance/{drone.name}', '_matrix_map_', f'{drone.name}_distanze',m)
 
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    # variabili di test
-    test_iteraction = 10
-    # variabili di esecuzione
-    righe = 40 # nuemro righe
-    colonne = 40 # numero colonne
-    iteration = 250 # numero di turni di esecuzione
-    drone_number = 4 # numero di droni
-    line_of_sight = 2 # distanza campo visivo dei droni
-    loss_factor = 0.98 # fattore di dimenticanza
-    has_wall = True # se deve impostare i muri
-    random_wall = False # se i muri sono casuali
-    random_position = True # se la posizione di partenza dei droni è casuale
-    alg = 1
+def teltest(test_iteraction, righe, colonne, iteration,
+            drone_number, line_of_sight, loss_factor,
+            has_wall, random_wall, random_position, alg):
 
     #
     #
@@ -171,7 +157,12 @@ if __name__ == '__main__':
     #
 
 
-
+    print("""
+    
+                    TEST stadard 
+    
+    
+    """)
     # standard test
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
@@ -179,6 +170,9 @@ if __name__ == '__main__':
 
     # test variando los
     line_of_sight = 3
+    print(f">>TEST con ", {test_iteraction}, {righe}, {colonne}, {iteration},
+          {drone_number}, {line_of_sight}, {loss_factor},
+          {has_wall}, {random_wall}, {random_position}, {alg})
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -459,16 +453,29 @@ if __name__ == '__main__':
             has_wall, random_wall, random_position, alg)
     print("Tutti i test sono stati completati con algoritmo 1")
 
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+    # variabili di test
+    test_iteraction = 10
+    # variabili di esecuzione
+    righe = 40 # nuemro righe
+    colonne = 40 # numero colonne
+    iteration = 250 # numero di turni di esecuzione
+    drone_number = 4 # numero di droni
+    line_of_sight = 2 # distanza campo visivo dei droni
+    loss_factor = 0.98 # fattore di dimenticanza
+    has_wall = True # se deve impostare i muri
+    random_wall = False # se i muri sono casuali
+    random_position = True # se la posizione di partenza dei droni è casuale
+    alg = 1
 
+    # fa partire tutti i test
+    #teltest(test_iteraction, righe, colonne, iteration,drone_number, line_of_sight, loss_factor,has_wall, random_wall, random_position, alg)
 
-
-
-
-
-    print(">> Inizia lo show")
-    show = True # per far vedere le immagini mentre procede
+    #print(">> Inizia lo show")
+    #show = True # per far vedere le immagini mentre procede
     # Crea le immagini.
-    runnable_show(righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
-                         random_position, show, alg)
+    #runnable_show(righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
+                         #random_position, show, alg)
 
     # preparazione al Test finale
