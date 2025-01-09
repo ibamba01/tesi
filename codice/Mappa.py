@@ -203,9 +203,9 @@ class MapGrid:
                     elif vv == 'EVENT':
                         poss_value += 0.0 # se è un evento il valore possibile è 0.0 (non conta, viene messa come target in automatico)
                     elif vv == 0.0:
-                        poss_value += 5.0 # se il valore è 0.0 il valore possibile è 5.0 (è una cella non esplorata, do un bonus di esplorazione)
+                        poss_value += 10.0 # se il valore è 0.0 il valore possibile è 5.0 (è una cella non esplorata, do un bonus di esplorazione)
                     elif vv <= 0.25:
-                        poss_value += (2.0 - vv) # se il valore è basso, il valore possibile ha un bonus
+                        poss_value += (6.0 - vv) # se il valore è basso, il valore possibile ha un bonus
                     else:
                         poss_value += (1.0 - vv)
         return poss_value

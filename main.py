@@ -14,10 +14,14 @@ def running(test_iteraction, righe, colonne, iteration, drone_number, line_of_si
     media /= test_iteraction
     print(f">> Media: {media} di conoscenza durante i test")
 
+    if alg == 1:
+        stringalg = "Dijkstra"
+    else:
+        stringalg = "Voronoi"
     # JSON
     # salva i dati dei test
     risultati = {
-        "algoritmo": "Dijkstra",
+        "algoritmo": stringalg,
         "righe": righe,
         "colonne": colonne,
         "numero droni": drone_number,
@@ -66,10 +70,14 @@ def funtest(r, c, m, n, l, f, hw, rw, rp, alg):
             best_turn = t
             bestchange += 1
     kn_media /= m
+    if alg == 1:
+        stringalg = "Dijkstra"
+    else:
+        stringalg = "Voronoi"
     data = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     dati = {
         "data e ora": data,
-        "algoritmo": "Dijkstra",
+        "algoritmo": stringalg,
         "righe": r,
         "colonne": c,
         "numero droni": n,
