@@ -12,8 +12,9 @@ def funtest(r, c, m, n, l, f, hw, rw, rp):
     bestchange = 0
     kn_list = []
     kn_media = 0
-    print("Inizio simulazione")
+    print(">>> Inizio simulazione")
     for t in range(m):
+        print(f">>>> Turno",t,"di",m)
         griglia.start(1)
         kn = griglia.print_map_knoledge()
         kn_list.append(kn)
@@ -61,17 +62,17 @@ def runnable_show(r, c, m, n, l, f, hw, rw, rp, s):
     for ii in range(0, n):
         drone_i = Drone.Drone(griglia, rand=rp, los=l)
         drone_i.name = f"drone_{ii}"
-    print("Droni creati")
+    print(">>> Droni creati")
 
     best_kn = 0
     best_turn = 0
     bestchange = 0
     kn_list = []
     kn_media = 0
-    print("Inizio simulazione")
+    print(">>> Inizio simulazione")
     for t in range(m):
         griglia.start(1)
-        print(f"Turno {t} di {m}")
+        print(f">>>> Turno {t} di {m}")
         Config.heatmap(griglia, "a", s)  # all
         kn = griglia.print_map_knoledge()
         kn_list.append(kn)
@@ -86,7 +87,7 @@ def runnable_show(r, c, m, n, l, f, hw, rw, rp, s):
     x = list(range(m))
     Config.graf_kn(x, kn_list)
 
-    print("Inizio Gif")
+    print(">>> Inizio Gif")
 
     Config.create_gif('immagini/color', 'color_map_', 'color', m)
     Config.create_gif('immagini/percorso', 'percorso_map_', 'percorso', m)
@@ -122,7 +123,7 @@ if __name__ == '__main__':
         print(f"Test {i + 1} di {test_iteraction} completato")
 
     media /= test_iteraction
-    print(f"Media: {media} di conoscenza durante i test")
+    print(f">> Media: {media} di conoscenza durante i test")
 
     #JSON
     # salva i dati dei test
@@ -153,7 +154,8 @@ if __name__ == '__main__':
     with open(file_path, "w") as file:
         json.dump(risultati_list, file, indent=4)
 
-    show = False # per far vedere le immagini mentre procede
+    print(">> Inizia lo show")
+    show = True # per far vedere le immagini mentre procede
     # Crea le immagini.
     runnable_show(righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
                          random_position, show)
