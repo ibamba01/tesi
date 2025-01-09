@@ -8,7 +8,7 @@ color_counter = 0
 partition_counter = 0
 per_counter = 0
 event_counter = 0
-zeri_counter = 0
+uniform_counter = 0
 
 # crea una gif
 def create_gif(input_folder='immagini/color', file_name='color_map_', name='output', n=200, delay=30):
@@ -122,7 +122,7 @@ def partition_heatmap(grid):
     plt.savefig(filename)
     plt.close()
 
-def uniform_heatmap(grid):
+def sas_uniform_heatmap(grid):
     mgrid = grid.get_value_grid()
     sns.set_theme(style="darkgrid")
     ax = sns.heatmap(mgrid, vmin=0, vmax=1)
@@ -153,8 +153,8 @@ def percorso_heatmap(grid):
     plt.close()
 
 
-def zero_heatmap(grid):
-    global zeri_counter
+def uniform_heatmap(grid):
+    global uniform_counter
     r_ighe, c_olonne = grid.get_bound()
     heatmap = np.zeros((r_ighe, c_olonne))
     for i in range(r_ighe):
@@ -164,8 +164,8 @@ def zero_heatmap(grid):
                 heatmap[i, j] = -1
             else:
                 heatmap[i, j] = value
-    filename = f'immagini/zeri/zeri_map_{zeri_counter}.png'
-    zeri_counter += 1
+    filename = f'immagini/zeri/zeri_map_{uniform_counter}.png'
+    uniform_counter += 1
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     plt.figure(figsize=(8, 8))
     cmap = plt.cm.get_cmap('viridis')
@@ -225,19 +225,22 @@ def heatmap(grid, map="c", s=False):
         color_heatmap(grid,s)
     elif map == "p": #partition
         partition_heatmap(grid)
-    elif map == "e": #percorso
+    elif map == "h": #percorso
         percorso_heatmap(grid)
-    elif map == "z": #zero
-        zero_heatmap(grid)
+    elif map == "u": #uniform
+        uniform_heatmap(grid)
     elif map == "a": #all
         color_heatmap(grid)
         partition_heatmap(grid)
         percorso_heatmap(grid)
-        zero_heatmap(grid)
+        uniform_heatmap(grid)
         for drone in grid.dronelist:
             distance_heatmap(grid, drone)
-    elif map == 'event':
+    elif map == 'e':
         event_heatmap(grid)
+    elif map == 'd':
+        for drone in grid.dronelist:
+            distance_heatmap(grid, drone)
     else: #error
         print("Mappa non valida")
         return
