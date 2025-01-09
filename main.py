@@ -170,13 +170,18 @@ def teltest(test_iteraction, righe, colonne, iteration,
 
     # test variando los
     line_of_sight = 3
-    print(f">>TEST con ", {test_iteraction}, {righe}, {colonne}, {iteration},
-          {drone_number}, {line_of_sight}, {loss_factor},
-          {has_wall}, {random_wall}, {random_position}, {alg})
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     line_of_sight = 4
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -184,14 +189,26 @@ def teltest(test_iteraction, righe, colonne, iteration,
 
     # Test variando il numero di droni
     drone_number = 3
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     drone_number = 5
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     drone_number = 6
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -200,11 +217,19 @@ def teltest(test_iteraction, righe, colonne, iteration,
     line_of_sight = 3
     drone_number = 3
     # meno droni ma con campo visivo più grande
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     line_of_sight = 4
     drone_number = 3
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -213,22 +238,42 @@ def teltest(test_iteraction, righe, colonne, iteration,
     line_of_sight = 2
     drone_number = 4
     loss_factor = 0.96 # dimenticano di più
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.94
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.92
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.90
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.99 # dimenticano di meno
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -237,19 +282,35 @@ def teltest(test_iteraction, righe, colonne, iteration,
     # Test misti dimenticano di più ma con piu droni
     loss_factor = 0.94
     drone_number = 6
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.96
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.94
     drone_number = 5
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.96
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -267,16 +328,28 @@ def teltest(test_iteraction, righe, colonne, iteration,
     alg = 0
 
     # standard test
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
 
     # test variando los
     line_of_sight = 3
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     line_of_sight = 4
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -284,14 +357,26 @@ def teltest(test_iteraction, righe, colonne, iteration,
 
     # Test variando il numero di droni
     drone_number = 3
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     drone_number = 5
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     drone_number = 6
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -300,11 +385,19 @@ def teltest(test_iteraction, righe, colonne, iteration,
     line_of_sight = 3
     drone_number = 3
     # meno droni ma con campo visivo più grande
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     line_of_sight = 4
     drone_number = 3
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -313,22 +406,42 @@ def teltest(test_iteraction, righe, colonne, iteration,
     line_of_sight = 2
     drone_number = 4
     loss_factor = 0.96  # dimenticano di più
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.94
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.92
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.90
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.99  # dimenticano di meno
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -336,19 +449,35 @@ def teltest(test_iteraction, righe, colonne, iteration,
     # Test misti dimenticano di più ma con piu droni
     loss_factor = 0.94
     drone_number = 6
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.96
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.94
     drone_number = 5
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.96
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -366,16 +495,28 @@ def teltest(test_iteraction, righe, colonne, iteration,
     alg = 1
 
     # standard test
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
 
     # test variando los
     line_of_sight = 3
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     line_of_sight = 4
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -383,14 +524,26 @@ def teltest(test_iteraction, righe, colonne, iteration,
 
     # Test variando il numero di droni
     drone_number = 3
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     drone_number = 5
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     drone_number = 6
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -398,12 +551,20 @@ def teltest(test_iteraction, righe, colonne, iteration,
     # Test droni e los
     line_of_sight = 3
     drone_number = 3
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     # meno droni ma con campo visivo più grande
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     line_of_sight = 4
     drone_number = 3
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -412,22 +573,42 @@ def teltest(test_iteraction, righe, colonne, iteration,
     line_of_sight = 2
     drone_number = 4
     loss_factor = 0.96  # dimenticano di più
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.94
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.92
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.90
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.99  # dimenticano di meno
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -435,19 +616,35 @@ def teltest(test_iteraction, righe, colonne, iteration,
     # Test misti dimenticano di più ma con piu droni
     loss_factor = 0.94
     drone_number = 6
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.96
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.94
     drone_number = 5
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
     loss_factor = 0.96
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
@@ -477,3 +674,4 @@ if __name__ == '__main__':
     # Crea le immagini.
     #runnable_show(righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
                          #random_position, show, alg)
+

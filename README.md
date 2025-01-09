@@ -42,7 +42,7 @@ Per entrambi gli algoritmi (Voronoi, Dijkstra) e nel caso del secondo viene test
 ##### I test parametrici sono:
 - line of sight (2,3,4)
 - numero di droni (3,4,5,6)
-- fattore di dimenticanza (0.98,0.96,0.94,0.92,0.90)
+- fattore di dimenticanza (0.98,0.96,0.94,0.92,0.90,0.99)
 - le loro combinazioni (los-numdron e fatt-numdron)
 
 ogni test è rappresentato dalla funzione ```running()``` , prende gli stessi parametri della funzione chiamante,
