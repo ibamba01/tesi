@@ -12,27 +12,34 @@ zeri_counter = 0
 
 # crea una gif
 def create_gif(input_folder='immagini/color', file_name='color_map_', name='output', n=200, delay=30):
-    # salva il path delle immagini
     input_folder = rf'{input_folder}'
-    # ottiene tutti i file PNG dalla cartella in ordine di nome
     image_files = [f"{input_folder}/{file_name}{i}.png" for i in range(n)]
-    # Nome del file GIF in output
+    if not image_files:
+        raise ValueError("Nessuna immagine trovata nella cartella specificata. Controlla i parametri di input.")
+
     output_gif = f'{name}.gif'
+    output_path = os.path.join('immagini', 'gif')
+    os.makedirs(output_path, exist_ok=True)
+
     # Crea una GIF animata con Wand
     with Image() as gif:
         for file in image_files:
-            with Image(filename=file) as img:
-                gif.sequence.append(img)
-
+            try:
+                with Image(filename=file) as img:
+                    gif.sequence.append(img)
+            except Exception as e:
+                print(f"Errore durante il caricamento dell'immagine '{file}': {e}")
+        if not gif.sequence:
+            raise ValueError("Non è stato possibile aggiungere alcuna immagine alla GIF.")
         for frame in gif.sequence:
             frame.delay = delay  # Delay di n centesimi di secondo (n ms)
 
         gif.type = 'optimize'
         gif.loop_count = 0  # Loop infinito
-        os.makedirs(os.path.dirname('../immagini/gif'), exist_ok=True)
+        output_file = os.path.join(output_path, output_gif)
         print("Salvataggio GIF in corso...")
-        gif.save(filename=f'immagini/gif/{output_gif}')
-        print(f"GIF salvata come '{output_gif}'.")
+        gif.save(filename=output_file)
+        print(f"GIF salvata come '{output_file}'.")
 
 def svuota_cartella(cartella):
     # Itera attraverso la cartella in modo r icorsivo
@@ -87,7 +94,7 @@ def color_heatmap(grid):
     #plt.colorbar(plt.cm.ScalarMappable(cmap="viridis"), label="Valore")
     plt.title("Heatmap delle celle esplorate")
     plt.savefig(filename)
-    plt.show()
+    plt.close()
 
 
 def partition_heatmap(grid):
@@ -256,4 +263,4 @@ def graf_kn(arrx,arry):
     plt.title('Livello di conoscenza globale')
     plt.legend()
     plt.savefig(filename)
-    plt.show()
+    plt.close()
