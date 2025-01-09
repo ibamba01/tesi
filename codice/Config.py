@@ -83,11 +83,9 @@ def color_heatmap(grid, show=False):
         px,py = dd.get_position()
         heatmap[px,py] = [1.0, 1.0, 1.0, 1.0]  # Rosso per la posizione del drone
 
-    # Incrementa il contatore e salva il file
     filename = f'immagini/color/color_map_{color_counter}.png'
     color_counter += 1
 
-    # Visualizza la heatmap
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     plt.figure(figsize=(8, 8))
     plt.imshow(heatmap, interpolation='nearest')
@@ -100,7 +98,7 @@ def color_heatmap(grid, show=False):
         plt.close()
 
 
-def partition_heatmap(grid):
+def partition_heatmap(grid,show=False):
     global partition_counter
     r_ighe, c_olonne = grid.get_bound()
     lista_agenti = grid.get_dronelist_set()
@@ -120,7 +118,10 @@ def partition_heatmap(grid):
     plt.imshow(heatmap, interpolation='nearest')
     plt.title("Heatmap della partizione")
     plt.savefig(filename)
-    plt.close()
+    if show:
+        plt.show()
+    else:
+        plt.close()
 
 def sas_uniform_heatmap(grid):
     mgrid = grid.get_value_grid()
@@ -128,7 +129,7 @@ def sas_uniform_heatmap(grid):
     ax = sns.heatmap(mgrid, vmin=0, vmax=1)
     plt.show()
 
-def percorso_heatmap(grid):
+def percorso_heatmap(grid,show=False):
     global per_counter
     r_ighe, c_olonne = grid.get_bound()
     lista_agenti = grid.get_dronelist_set()
@@ -150,10 +151,13 @@ def percorso_heatmap(grid):
     plt.imshow(heatmap, interpolation='nearest')
     plt.title("Heatmap del percorso")
     plt.savefig(filename)
-    plt.close()
+    if show:
+        plt.show()
+    else:
+        plt.close()
 
 
-def uniform_heatmap(grid):
+def uniform_heatmap(grid,show=False):
     global uniform_counter
     r_ighe, c_olonne = grid.get_bound()
     heatmap = np.zeros((r_ighe, c_olonne))
@@ -174,9 +178,12 @@ def uniform_heatmap(grid):
     plt.colorbar(label="Valore della mappa")
     plt.title("Heatmap globale")
     plt.savefig(filename)
-    plt.close()
+    if show:
+        plt.show()
+    else:
+        plt.close()
 
-def distance_heatmap(grid, drone):
+def distance_heatmap(grid, drone,show=False):
     r_ighe, c_olonne = grid.get_bound()
     heatmap = np.zeros((r_ighe, c_olonne))
     for i in range(r_ighe):
@@ -196,9 +203,12 @@ def distance_heatmap(grid, drone):
     plt.colorbar(label="Valore della distanza")
     plt.title("Matrice delle distanze")
     plt.savefig(filename)
-    plt.close()
+    if show:
+        plt.show()
+    else:
+        plt.close()
 
-def event_heatmap(grid):
+def event_heatmap(grid,show=False):
     global event_counter
     r_ighe, c_olonne = grid.get_bound()
     heatmap = np.zeros((r_ighe, c_olonne, 4))
@@ -218,29 +228,32 @@ def event_heatmap(grid):
     plt.imshow(heatmap, interpolation='nearest')
     plt.title("Heatmap del percorso")
     plt.savefig(filename)
-    plt.close()
+    if show:
+        plt.show()
+    else:
+        plt.close()
     
 def heatmap(grid, map="c", s=False):
     if map == "c": #color
         color_heatmap(grid,s)
     elif map == "p": #partition
-        partition_heatmap(grid)
+        partition_heatmap(grid,s)
     elif map == "h": #percorso
-        percorso_heatmap(grid)
+        percorso_heatmap(grid,s)
     elif map == "u": #uniform
-        uniform_heatmap(grid)
+        uniform_heatmap(grid,s)
     elif map == "a": #all
-        color_heatmap(grid)
-        partition_heatmap(grid)
-        percorso_heatmap(grid)
-        uniform_heatmap(grid)
+        color_heatmap(grid,s)
+        partition_heatmap(grid,s)
+        percorso_heatmap(grid,s)
+        uniform_heatmap(grid,s)
         for drone in grid.dronelist:
-            distance_heatmap(grid, drone)
+            distance_heatmap(grid, drone,s)
     elif map == 'e':
-        event_heatmap(grid)
+        event_heatmap(grid,s)
     elif map == 'd':
         for drone in grid.dronelist:
-            distance_heatmap(grid, drone)
+            distance_heatmap(grid, drone,s)
     else: #error
         print("Mappa non valida")
         return
@@ -257,7 +270,7 @@ def print_tree(startpath, indent=""):
 
 # Sostituisci con il path del tuo progetto
 
-def graf_kn(arrx,arry):
+def graf_kn(arrx,arry,show=False):
     filename = f'immagini/grafici/conoscenza.png'
     os.makedirs(os.path.dirname(filename), exist_ok=True)
     plt.clf()
@@ -267,4 +280,7 @@ def graf_kn(arrx,arry):
     plt.title('Livello di conoscenza globale')
     plt.legend()
     plt.savefig(filename)
-    plt.close()
+    if show:
+        plt.show()
+    else:
+        plt.close()

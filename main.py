@@ -456,7 +456,7 @@ def teltest(test_iteraction, righe, colonne, iteration,
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # variabili di test
-    test_iteraction = 10
+    test_iteraction = 20
     # variabili di esecuzione
     righe = 40 # nuemro righe
     colonne = 40 # numero colonne
@@ -470,12 +470,10 @@ if __name__ == '__main__':
     alg = 1
 
     # fa partire tutti i test
-    #teltest(test_iteraction, righe, colonne, iteration,drone_number, line_of_sight, loss_factor,has_wall, random_wall, random_position, alg)
+    teltest(test_iteraction, righe, colonne, iteration,drone_number, line_of_sight, loss_factor,has_wall, random_wall, random_position, alg)
 
     #print(">> Inizia lo show")
     #show = True # per far vedere le immagini mentre procede
     # Crea le immagini.
     #runnable_show(righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
                          #random_position, show, alg)
-
-    # preparazione al Test finale
