@@ -52,7 +52,7 @@ def svuota_cartella(cartella):
     print(f"La cartella '{cartella}' è stata svuotata con successo.")
 
 
-def color_heatmap(grid):
+def color_heatmap(grid, show=False):
     global color_counter  # Usa la variabile globale
     # Recupera le dimensioni della griglia
     r_ighe, c_olonne = grid.get_bound()
@@ -94,7 +94,10 @@ def color_heatmap(grid):
     #plt.colorbar(plt.cm.ScalarMappable(cmap="viridis"), label="Valore")
     plt.title("Heatmap delle celle esplorate")
     plt.savefig(filename)
-    plt.close()
+    if show:
+        plt.show()
+    else:
+        plt.close()
 
 
 def partition_heatmap(grid):
@@ -217,11 +220,9 @@ def event_heatmap(grid):
     plt.savefig(filename)
     plt.close()
     
-def heatmap(grid, map="u"):
-    if map == "u": #uniform
-        uniform_heatmap(grid)
-    elif map == "c": #color
-        color_heatmap(grid)
+def heatmap(grid, map="c", s=False):
+    if map == "c": #color
+        color_heatmap(grid,s)
     elif map == "p": #partition
         partition_heatmap(grid)
     elif map == "e": #percorso

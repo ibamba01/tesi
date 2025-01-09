@@ -54,12 +54,12 @@ def funtest(r, c, m, n, l, f, hw, rw, rp):
         json.dump(dati_list, file, indent=4)
     return kn_media
 
-def runnable_show(r, c, m, n, l):
+def runnable_show(r, c, m, n, l, f, hw, rw, rp, s):
     Config.svuota_cartella('immagini')
 
-    griglia = Mappa.MapGrid(r, c, has_wall=True)
+    griglia = Mappa.MapGrid(r, c, has_wall=hw, random_wall=rw, loss_rate=f)
     for ii in range(0, n):
-        drone_i = Drone.Drone(griglia, rand=True, los=l)
+        drone_i = Drone.Drone(griglia, rand=rp, los=l)
         drone_i.name = f"drone_{ii}"
     print("Droni creati")
 
@@ -72,7 +72,7 @@ def runnable_show(r, c, m, n, l):
     for t in range(m):
         griglia.start(1)
         print(f"Turno {t} di {m}")
-        Config.heatmap(griglia, "a")  # all
+        Config.heatmap(griglia, "a", s)  # all
         kn = griglia.print_map_knoledge()
         kn_list.append(kn)
         kn_media += kn
@@ -87,35 +87,45 @@ def runnable_show(r, c, m, n, l):
     Config.graf_kn(x, kn_list)
 
     print("Inizio Gif")
-    for drone in griglia.dronelist:
-        Config.create_gif(f'immagini/matrix_distance/{drone.name}', '_matrix_map_', f'{drone.name}_distanze',m)
+
     Config.create_gif('immagini/color', 'color_map_', 'color', m)
     Config.create_gif('immagini/percorso', 'percorso_map_', 'percorso', m)
     Config.create_gif('immagini/partition', 'partition_map_', 'partition', m)
     Config.create_gif('immagini/zeri', 'zeri_map_', 'zeri', m)
-
+    for drone in griglia.dronelist:
+        Config.create_gif(f'immagini/matrix_distance/{drone.name}', '_matrix_map_', f'{drone.name}_distanze',m)
 
 
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
+    # variabili di test
     test_iteraction = 10
+    # variabili di esecuzione
+    righe = 40 # nuemro righe
+    colonne = 40 # numero colonne
+    iteration = 250 # numero di turni di esecuzione
+    drone_number = 4 # numero di droni
+    line_of_sight = 2 # distanza campo visivo dei droni
+    loss_factor = 0.98 # fattore di dimenticanza
+    has_wall = True # se deve impostare i muri
+    random_wall = False # se i muri sono casuali
+    random_position = True # se la posizione di partenza dei droni è casuale
 
-    righe = 40
-    colonne = 40
-    iteration = 25
-    drone_number = 4
-    line_of_sight = 2
-    loss_factor = 0.98
+
     media = 0
-    has_wall = True
-    random_wall = True
-    random_position = True
+
+    #inizio Test
     for i in range(test_iteraction):
-        media += funtest(righe,colonne,iteration,drone_number,line_of_sight,loss_factor,has_wall,random_wall,random_position) # serve per fare la media
-        print(f"Test {i+1} di {test_iteraction}")
+        media += funtest(righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
+                         random_position)  # serve per fare la media
+        print(f"Test {i + 1} di {test_iteraction} completato")
+
     media /= test_iteraction
-    print(f"Media: {media}")
+    print(f"Media: {media} di conoscenza durante i test")
+
+    #JSON
+    # salva i dati dei test
     risultati = {
         "algoritmo": "Dijkstra",
         "righe": righe,
@@ -130,14 +140,20 @@ if __name__ == '__main__':
         "posizioni muri": random_wall,
         "conoscenza media globale": media,
     }
+    # prende il path dei dati
     file_path = "risultati.json"
+    # aggiunge i dati alla lista
     if os.path.exists(file_path):
         with open(file_path, "r") as file:
             risultati_list = json.load(file)
     else:
         risultati_list = []
     risultati_list.append(risultati)
+    # salva i dati
     with open(file_path, "w") as file:
         json.dump(risultati_list, file, indent=4)
 
-    runnable_show(righe, colonne, iteration, drone_number, line_of_sight)
+    show = False # per far vedere le immagini mentre procede
+    # Crea le immagini.
+    runnable_show(righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
+                         random_position, show)
