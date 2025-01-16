@@ -1,15 +1,33 @@
+from fileinput import filename
+
 from codice import Mappa as Mappa, Config as Config, Drone as Drone
 import json,os
 from datetime import datetime
+import matplotlib.pyplot as plt
 
 def running(test_iteraction, righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
                          random_position, alg):
+    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
+          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
+          "has_wall:", has_wall,
+          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
     media = 0
+    media_lista = None
     # inizio Test
     for i in range(test_iteraction):
-        media += funtest(righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
+        # mm è la media di conoscenza di un singolo test e listf è la lista di conoscenze di ogni turno di un singolo test
+        mm, listf = funtest(righe, colonne, iteration, drone_number, line_of_sight, loss_factor, has_wall, random_wall,
                          random_position, alg)  # serve per fare la media
+        media += mm
+        if media_lista is None:
+            media_lista = listf[:]  # Usa una copia per mantenere indipendenza
+        else:
+            for j in range(len(listf)):
+                media_lista[j] += listf[j]
         print(f"Test {i + 1} di {test_iteraction} completato")
+
+    for j in range(len(media_lista)):
+        media_lista[j] /= test_iteraction
 
     media /= test_iteraction
     print(f">> Media: {media} di conoscenza durante i test")
@@ -46,6 +64,9 @@ def running(test_iteraction, righe, colonne, iteration, drone_number, line_of_si
     # salva i dati
     with open(external_path, "w") as file:
         json.dump(risultati_list, file, indent=4)
+
+    return media_lista
+
 
 
 def funtest(r, c, m, n, l, f, hw, rw, rp, alg):
@@ -103,7 +124,7 @@ def funtest(r, c, m, n, l, f, hw, rw, rp, alg):
     dati_list.append(dati)
     with open(file_path, "w") as file:
         json.dump(dati_list, file, indent=4)
-    return kn_media
+    return kn_media, kn_list # ritorna la media di conoscenza e la lista di conoscenze
 
 def runnable_show(r, c, m, n, l, f, hw, rw, rp, s, alg):
     Config.svuota_cartella('immagini')
@@ -156,504 +177,313 @@ def teltest(test_iteraction, righe, colonne, iteration,
     #
     #
 
-
     print("""
-    
+
                     TEST stadard 
-    
-    
+
+
     """)
     # standard test
-    running(test_iteraction, righe, colonne, iteration,
+    result_standard  = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
+
 
     # test variando los
     line_of_sight = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_l3 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
     line_of_sight = 4
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_l4 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
-    line_of_sight = 2
+    line_of_sight = 2 # normale
+
 
     # Test variando il numero di droni
     drone_number = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    drone_number = 5
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    drone_number = 6
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_d3 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
 
-    # Test droni e los
-    line_of_sight = 3
-    drone_number = 3
-    # meno droni ma con campo visivo più grande
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+
+    drone_number = 5
+    result_d5 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
-    line_of_sight = 4
-    drone_number = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+
+
+    drone_number = 6
+    result_d6 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+    drone_number = 4  # normale
+
+
 
     # Test al variare del fattore di dimenticanza
-    line_of_sight = 2
-    drone_number = 4
-    loss_factor = 0.96 # dimenticano di più
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.94
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.92
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.90
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.99 # dimenticano di meno
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-
-
-    # Test misti dimenticano di più ma con piu droni
-    loss_factor = 0.94
-    drone_number = 6
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.96
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.94
-    drone_number = 5
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.96
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    print("Tutti i test sono stati completati con algoritmo 1")
-
-    #
-    #
-    # TEST SENZA MURI ALG VORONOI
-    #
-    #
-
-    has_wall = False  # se deve impostare i muri
-    random_wall = False  # se i muri sono casuali
-    random_position = True  # se la posizione di partenza dei droni è casuale
-    alg = 0
-
-    # standard test
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-
-    # test variando los
-    line_of_sight = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    line_of_sight = 4
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    line_of_sight = 2
-
-    # Test variando il numero di droni
-    drone_number = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    drone_number = 5
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    drone_number = 6
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-
-    # Test droni e los
-    line_of_sight = 3
-    drone_number = 3
-    # meno droni ma con campo visivo più grande
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    line_of_sight = 4
-    drone_number = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-
-    # Test al variare del fattore di dimenticanza
-    line_of_sight = 2
-    drone_number = 4
     loss_factor = 0.96  # dimenticano di più
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_lo6 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
     loss_factor = 0.94
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_lo4 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
     loss_factor = 0.92
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_lo2 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
     loss_factor = 0.90
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_lo0 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
     loss_factor = 0.99  # dimenticano di meno
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_lo9 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+    loss_factor = 0.98 # normale
 
-    # Test misti dimenticano di più ma con piu droni
-    loss_factor = 0.94
-    drone_number = 6
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.96
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.94
-    drone_number = 5
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    loss_factor = 0.96
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    print("Tutti i test sono stati completati con algoritmo 0")
 
-    #
-    #
-    # TEST SENZA MURI ALG DIJKSTRA
-    #
-    #
 
-    has_wall = False  # se deve impostare i muri
-    random_wall = False  # se i muri sono casuali
-    random_position = True  # se la posizione di partenza dei droni è casuale
-    alg = 1
-
-    # standard test
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-
-    # test variando los
-    line_of_sight = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    line_of_sight = 4
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    line_of_sight = 2
-
-    # Test variando il numero di droni
-    drone_number = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    drone_number = 5
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    drone_number = 6
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-
+# TEST MISTI
     # Test droni e los
-    line_of_sight = 3
-    drone_number = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
+    line_of_sight = 3 # piu grande
+    drone_number = 3 # meno droni
     # meno droni ma con campo visivo più grande
-    running(test_iteraction, righe, colonne, iteration,
-            drone_number, line_of_sight, loss_factor,
-            has_wall, random_wall, random_position, alg)
-    line_of_sight = 4
-    drone_number = 3
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_d3l3 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
 
-    # Test al variare del fattore di dimenticanza
-    line_of_sight = 2
-    drone_number = 4
-    loss_factor = 0.96  # dimenticano di più
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    line_of_sight = 4
+    drone_number = 2
+    result_d2l4 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
+    line_of_sight = 4
+    drone_number = 3
+    result_d3l4 = running(test_iteraction, righe, colonne, iteration,
+                          drone_number, line_of_sight, loss_factor,
+                          has_wall, random_wall, random_position, alg)
+    line_of_sight = 2 # normale
+
+
+    # Test misti dimenticano di più ma con piu droni
+    # 6 droni
     loss_factor = 0.94
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    drone_number = 6
+    result_lo4d6 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
-    loss_factor = 0.92
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+
+    loss_factor = 0.96
+    result_lo6d6 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
-    loss_factor = 0.90
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+
+    # 5 droni
+    loss_factor = 0.94
+    drone_number = 5
+    result_lo4d5 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
-    loss_factor = 0.99  # dimenticano di meno
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+
+    loss_factor = 0.96
+    result_lo6d5 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+    drone_number = 4 # normale
+
+
+    # Test misti dimenticano di più ma con vista maggiore
+    loss_factor = 0.96
+    line_of_sight = 3
+    result_lo6l3 = running(test_iteraction, righe, colonne, iteration,
+                           drone_number, line_of_sight, loss_factor,
+                           has_wall, random_wall, random_position, alg)
+    line_of_sight = 4
+    result_lo6l4 = running(test_iteraction, righe, colonne, iteration,
+                           drone_number, line_of_sight, loss_factor,
+                           has_wall, random_wall, random_position, alg)
+    loss_factor = 0.94
+    result_lo4l4 = running(test_iteraction, righe, colonne, iteration,
+                           drone_number, line_of_sight, loss_factor,
+                           has_wall, random_wall, random_position, alg)
+    line_of_sight = 3
+    result_lo4l3 = running(test_iteraction, righe, colonne, iteration,
+                           drone_number, line_of_sight, loss_factor,
+                           has_wall, random_wall, random_position, alg)
+
+
+
 
     # Test misti dimenticano di più ma con piu droni
     loss_factor = 0.94
     drone_number = 6
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    line_of_sight = 3
+    result_lo4d6l3 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
     loss_factor = 0.96
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_lo6d6l3 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
     loss_factor = 0.94
     drone_number = 5
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_lo4d5l3 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
+
     loss_factor = 0.96
-    print(f">>TEST con ", "test_iteraction:", test_iteraction, "righe:", righe, "colonne:", colonne, "iteration:",
-          iteration, "drone_number:", drone_number, "line_of_sight:", line_of_sight, "loss_factor:", loss_factor,
-          "has_wall:", has_wall,
-          "random_wall:", random_wall, "random_position:", random_position, "alg:", alg)
-    running(test_iteraction, righe, colonne, iteration,
+    result_lo6d5l3 = running(test_iteraction, righe, colonne, iteration,
             drone_number, line_of_sight, loss_factor,
             has_wall, random_wall, random_position, alg)
-    print("Tutti i test sono stati completati con algoritmo 1")
+
+    loss_factor = 0.99
+    drone_number = 2
+    line_of_sight = 2
+    result_lo9d2l2 = running(test_iteraction, righe, colonne, iteration,
+                             drone_number, line_of_sight, loss_factor,
+                             has_wall, random_wall, random_position, alg)
+
+    drone_number = 2
+    line_of_sight = 3
+    result_lo9d2l3 = running(test_iteraction, righe, colonne, iteration,
+                             drone_number, line_of_sight, loss_factor,
+                             has_wall, random_wall, random_position, alg)
+
+    drone_number = 3
+    line_of_sight = 3
+    result_lo9d3l3 = running(test_iteraction, righe, colonne, iteration,
+                             drone_number, line_of_sight, loss_factor,
+                             has_wall, random_wall, random_position, alg)
+
+    arrx = list(range(iteration))
+    Config.svuota_cartella('immagini/grafici')
+    filename = f'immagini/grafici/standard.png'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    plt.clf()
+    plt.plot(arrx, result_standard, color='blue', label='Standard')
+    plt.xlabel('Tempo')
+    plt.ylabel('Livello di conoscenza')
+    plt.savefig(filename)
+    plt.close()
+
+
+    filename = f'immagini/grafici/confronto_droni.png'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    plt.clf()
+    plt.plot(arrx, result_standard, color='blue', label='Standard')
+    plt.plot(arrx, result_d3, color='red', label='3 droni')
+    plt.plot(arrx, result_d5, color='green', label='5 droni')
+    plt.plot(arrx, result_d6, color='orange', label='6 droni')
+    plt.xlabel('Tempo')
+    plt.ylabel('Livello di conoscenza')
+    plt.legend()
+    plt.savefig(filename)
+    plt.close()
+
+    filename = f'immagini/grafici/confronto_los.png'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    plt.clf()
+    plt.plot(arrx, result_standard, color='blue', label='Standard')
+    plt.plot(arrx, result_l3, color='red', label='LOS 3')
+    plt.plot(arrx, result_l4, color='green', label='LOS 4')
+    plt.xlabel('Tempo')
+    plt.ylabel('Livello di conoscenza')
+    plt.legend()
+    plt.savefig(filename)
+    plt.close()
+
+    filename = f'immagini/grafici/confronto_loss.png'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    plt.clf()
+    plt.plot(arrx, result_standard, color='blue', label='Standard')
+    plt.plot(arrx, result_lo6, color='red', label='Loss factor 0.96')
+    plt.plot(arrx, result_lo4, color='green', label='Loss factor 0.94')
+    plt.plot(arrx, result_lo2, color='orange', label='Loss factor 0.92')
+    plt.plot(arrx, result_lo0, color='purple', label='Loss factor 0.90')
+    plt.plot(arrx, result_lo9, color='black', label='Loss factor 0.99')
+    plt.xlabel('Tempo')
+    plt.ylabel('Livello di conoscenza')
+    plt.legend()
+    plt.savefig(filename)
+    plt.close()
+
+    filename = f'immagini/grafici/confronto_misti_droni_los.png'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    plt.clf()
+    plt.plot(arrx, result_standard, color='blue', label='Standard')
+    plt.plot(arrx, result_d3l3, color='red', label='3 droni LOS 3')
+    plt.plot(arrx, result_d3l4, color='green', label='3 droni LOS 4')
+    plt.plot(arrx, result_d2l4, color='orange', label='2 droni LOS 4')
+    plt.xlabel('Tempo')
+    plt.ylabel('Livello di conoscenza')
+    plt.legend()
+    plt.savefig(filename)
+    plt.close()
+
+    filename = f'immagini/grafici/confronto_misti_loss_droni.png'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    plt.clf()
+    plt.plot(arrx, result_standard, color='blue', label='Standard')
+    plt.plot(arrx, result_lo4d5, color='red', label='Loss factor 0.94 5 droni')
+    plt.plot(arrx, result_lo6d5, color='green', label='Loss factor 0.96 5 droni')
+    plt.plot(arrx, result_lo4d6, color='orange', label='Loss factor 0.94 6 droni')
+    plt.plot(arrx, result_lo6d6, color='purple', label='Loss factor 0.96 6 droni')
+    plt.xlabel('Tempo')
+    plt.ylabel('Livello di conoscenza')
+    plt.legend()
+    plt.savefig(filename)
+    plt.close()
+
+
+    filename = f'immagini/grafici/confronto_misti_loss_los.png'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    plt.clf()
+    plt.plot(arrx, result_standard, color='blue', label='Standard')
+    plt.plot(arrx, result_lo6l3, color='red', label='Loss factor 0.96 LOS 3')
+    plt.plot(arrx, result_lo6l4, color='green', label='Loss factor 0.96 LOS 4')
+    plt.plot(arrx, result_lo4l3, color='orange', label='Loss factor 0.94 LOS 3')
+    plt.plot(arrx, result_lo4l4, color='purple', label='Loss factor 0.94 LOS 4')
+    plt.xlabel('Tempo')
+    plt.ylabel('Livello di conoscenza')
+    plt.legend()
+    plt.savefig(filename)
+    plt.close()
+
+    filename = f'immagini/grafici/confronto_misti.png'
+    os.makedirs(os.path.dirname(filename), exist_ok=True)
+    plt.clf()
+    plt.plot(arrx, result_standard, color='blue', label='Standard')
+    plt.plot(arrx, result_lo9d2l2, color='black', label='Loss factor 0.99 2 droni LOS 2')
+    plt.plot(arrx, result_lo9d2l3, color='yellow', label='Loss factor 0.99 2 droni LOS 3')
+    plt.plot(arrx, result_lo9d3l3, color='brown', label='Loss factor 0.99 3 droni LOS 3')
+    plt.plot(arrx, result_lo4d5l3, color='red', label='Loss factor 0.94 5 droni LOS 3')
+    plt.plot(arrx, result_lo6d5l3, color='green', label='Loss factor 0.96 5 droni LOS 3')
+    plt.plot(arrx, result_lo4d6l3, color='orange', label='Loss factor 0.94 6 droni LOS 3')
+    plt.plot(arrx, result_lo6d6l3, color='purple', label='Loss factor 0.96 6 droni LOS 3')
+    plt.xlabel('Tempo')
+    plt.ylabel('Livello di conoscenza')
+    plt.legend()
+    plt.savefig(filename)
+    plt.close()
+
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
     # variabili di test
-    test_iteraction = 20
+    test_iteraction = 10
     # variabili di esecuzione
     righe = 40 # nuemro righe
     colonne = 40 # numero colonne
