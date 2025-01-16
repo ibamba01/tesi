@@ -11,7 +11,7 @@ class Drone:
         self.my_events = [] # celle che deve visitare per attivare gli eventi
         self.busy = False
         self.random_position = rand
-        self.target = (0,0)  # cella target verso cui si muove il drone
+        self.target = self.grid.get_neerest_free(0, 0)  # cella target verso cui si muove il drone
         self.lineofsight = los  # imposta il campo visivo del drone
         self.balance = 0.7  # bilancia il valore della cella con la distanza dal drone
         self.path_to_target = []  # contiene il percorso verso il target
@@ -146,7 +146,7 @@ class Drone:
         # il valore massimo che posso ottenere chiamando la funzione cell_circle_value su quella cella
         max_possibile = 0
         # tupla della cella che massimizza il valore
-        mtup = (0, 0)
+        mtup = self.grid.get_neerest_free(0, 0)
         # per ogni cella appartenente al drone
         for tup in self.my_cells:
             px, py = tup
@@ -192,7 +192,7 @@ class Drone:
 
         if not self.my_events: #lista eventi vuota
             max_possible = 0
-            mtup = (0, 0)
+            mtup = self.grid.get_neerest_free(0, 0)
             for tup in self.my_cells:  # per ogni cella appartenente al drone, (non sono wall o fuori dalla griglia)
                 if self.grid.is_wall(tup[0], tup[1]) or not self.grid.is_within_bounds(tup[0], tup[1]):
                     continue
